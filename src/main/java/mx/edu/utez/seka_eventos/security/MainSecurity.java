@@ -48,6 +48,11 @@ public class MainSecurity implements WebMvcConfigurer {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(WHITE_LIST).permitAll()
                         .requestMatchers("/api/test/secured").hasRole("ADMIN")
+                        .requestMatchers("/api/eventos/**").permitAll()
+                        .requestMatchers("/api/grupo/**").permitAll()
+                        .requestMatchers("/api/rol/**").hasRole("ADMIN")
+                        .requestMatchers("/api/tipoevento/**").permitAll()
+                        .requestMatchers("/api/usuario/**").permitAll()
                         .anyRequest().authenticated()
                 ).addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

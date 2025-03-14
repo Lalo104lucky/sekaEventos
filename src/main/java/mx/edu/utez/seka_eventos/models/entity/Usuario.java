@@ -34,6 +34,7 @@ public class Usuario {
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "id_rol")
+    @JsonIgnore
     private Rol rol;
 
     @ManyToMany(mappedBy = "usuarios",cascade = {CascadeType.MERGE, CascadeType.REMOVE})
