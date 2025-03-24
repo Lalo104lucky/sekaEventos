@@ -1,7 +1,6 @@
 package mx.edu.utez.seka_eventos.controller;
 
 
-import mx.edu.utez.seka_eventos.kernel.CustomResponse;
 import mx.edu.utez.seka_eventos.services.RolService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;

@@ -6,7 +6,9 @@ import mx.edu.utez.seka_eventos.models.dao.UsuarioRepository;
 import mx.edu.utez.seka_eventos.models.dto.UsuarioDTO;
 import mx.edu.utez.seka_eventos.models.entity.Rol;
 import mx.edu.utez.seka_eventos.models.entity.Usuario;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,11 +22,13 @@ public class UsuarioService {
     private final UsuarioRepository repository;
     private final RolRepository rolRepository;
     private final CustomResponse customResponse;
+    private final PasswordEncoder encoder;
 
-    public UsuarioService(UsuarioRepository repository, RolRepository rolRepository, CustomResponse customResponse) {
+    public UsuarioService(UsuarioRepository repository, RolRepository rolRepository, CustomResponse customResponse,@Lazy PasswordEncoder encoder) {
         this.repository = repository;
         this.rolRepository = rolRepository;
         this.customResponse = customResponse;
+        this.encoder = encoder;
     }
 
     @Transactional(readOnly = true)
@@ -52,7 +56,7 @@ public class UsuarioService {
         Usuario usuario = new Usuario();
         usuario.setApellido_m(usuarioDTO.getApellido_m());
         usuario.setApellido_p(usuarioDTO.getApellido_p());
-        usuario.setContrasena(usuarioDTO.getContrasena());
+        usuario.setContrasena(encoder.encode(usuarioDTO.getContrasena()));
         usuario.setCorreo(usuarioDTO.getCorreo());
         usuario.setNombre(usuarioDTO.getNombre());
         usuario.setTelefono(usuarioDTO.getTelefono());
@@ -69,7 +73,7 @@ public class UsuarioService {
         Usuario usuario = foundUser.get();
         usuario.setApellido_m(usuarioDTO.getApellido_m());
         usuario.setApellido_p(usuarioDTO.getApellido_p());
-        usuario.setContrasena(usuarioDTO.getContrasena());
+        usuario.setContrasena(encoder.encode(usuarioDTO.getContrasena()));
         usuario.setCorreo(usuarioDTO.getCorreo());
         usuario.setNombre(usuarioDTO.getNombre());
         usuario.setTelefono(usuarioDTO.getTelefono());
@@ -99,7 +103,7 @@ public class UsuarioService {
             return customResponse.get400Response(400);
         }
         Usuario usuario = foundUser.get();
-        usuario.setContrasena(usuarioDTO.getContrasena());
+        usuario.setContrasena(encoder.encode(usuarioDTO.getContrasena()));
         return customResponse.getOkResponse(repository.save(usuario));
     }
 

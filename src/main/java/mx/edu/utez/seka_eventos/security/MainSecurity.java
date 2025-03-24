@@ -6,10 +6,12 @@ import mx.edu.utez.seka_eventos.security.service.UserDetailsImplService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,17 +32,12 @@ public class MainSecurity implements WebMvcConfigurer {
     @Autowired
     private CustomInterceptor customInterceptor;
 
-    private final UserDetailsImplService service;
-
     private final static String[] WHITE_LIST = {
             "/api/test",
             "/api/auth/login",
             "/api/send-email"
     };
 
-    public MainSecurity(UserDetailsImplService service) {
-        this.service = service;
-    }
 
     public static String[] getWHITE_LIST() {
         return WHITE_LIST;
@@ -58,7 +55,7 @@ public class MainSecurity implements WebMvcConfigurer {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
+    public AuthenticationProvider authenticationProvider(@Lazy UserDetailsImplService service) {
         DaoAuthenticationProvider dao = new DaoAuthenticationProvider();
         dao.setUserDetailsService(service);
         dao.setPasswordEncoder(passwordEncoder());
@@ -85,5 +82,6 @@ public class MainSecurity implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(customInterceptor).addPathPatterns("/api/test/secured");
     }
+    
 
 }

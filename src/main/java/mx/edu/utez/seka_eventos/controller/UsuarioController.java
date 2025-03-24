@@ -34,7 +34,7 @@ public class UsuarioController {
     @PostMapping("/")
     public ResponseEntity<?> create(@RequestBody UsuarioDTO usuarioDTO) {
         try {
-            return new ResponseEntity<>(service.register(usuarioDTO), HttpStatus.OK);
+            return new ResponseEntity<>(service.register(usuarioDTO), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

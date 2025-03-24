@@ -3,6 +3,7 @@ package mx.edu.utez.seka_eventos.controller;
 import mx.edu.utez.seka_eventos.kernel.CustomResponse;
 import mx.edu.utez.seka_eventos.models.dto.EventoDTO;
 import mx.edu.utez.seka_eventos.services.EventoService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,17 +20,25 @@ public class EventoController {
 
     @GetMapping("/")
     public ResponseEntity<?> getAll() {
-        return eventoService.findAll();
+        return new ResponseEntity<>(eventoService.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
-        return eventoService.findById(id);
+        try {
+            return new ResponseEntity<>(eventoService.findById(id), HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/")
     public ResponseEntity<?> create(@RequestBody EventoDTO eventoDTO) {
-        return eventoService.register(eventoDTO);
+        try {
+            return new ResponseEntity<>(eventoService.register(eventoDTO), HttpStatus.CREATED);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/{id}")

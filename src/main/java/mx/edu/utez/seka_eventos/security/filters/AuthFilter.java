@@ -48,7 +48,6 @@ public class AuthFilter extends OncePerRequestFilter {
 
                 if (AUTH_HEADER != null && AUTH_HEADER.startsWith("Bearer")) {
                     String token = provider.resolveToken(request);
-                    System.out.println("Token: " + token);
                     System.out.println("Verificando que el usuario exista...");
                     if (token != null) {
                         Claims claims = provider.resolveClaims(request);
