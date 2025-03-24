@@ -1,13 +1,10 @@
 package mx.edu.utez.seka_eventos.controller;
 
-
-import mx.edu.utez.seka_eventos.kernel.CustomResponse;
+import mx.edu.utez.seka_eventos.models.dto.UsuarioDTO;
 import mx.edu.utez.seka_eventos.services.UsuarioService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/usuario")
@@ -15,15 +12,49 @@ import org.springframework.web.bind.annotation.RestController;
 public class UsuarioController {
 
     private final UsuarioService service;
-    private final CustomResponse customResponse;
 
-    public UsuarioController(UsuarioService service, CustomResponse customResponse) {
+    public UsuarioController(UsuarioService service) {
         this.service = service;
-        this.customResponse = customResponse;
     }
 
     @GetMapping("/")
-    public ResponseEntity<Object> getAll() {
-        return ResponseEntity.ok(service.findAll());
+    public ResponseEntity<?> getAll() {
+        return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable Long id) {
+        try {
+            return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/")
+    public ResponseEntity<?> create(@RequestBody UsuarioDTO usuarioDTO) {
+        try {
+            return new ResponseEntity<>(service.register(usuarioDTO), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@RequestBody UsuarioDTO usuarioDTO) {
+        try {
+            return new ResponseEntity<>(service.update(usuarioDTO), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        try {
+            return new ResponseEntity<>(service.delete(id), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }

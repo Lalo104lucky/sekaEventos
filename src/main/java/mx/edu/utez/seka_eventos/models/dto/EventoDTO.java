@@ -1,12 +1,14 @@
 package mx.edu.utez.seka_eventos.models.dto;
 
 
+import mx.edu.utez.seka_eventos.models.entity.TIpoEvento;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class EventoDTO {
 
-    private Long id_evento;
+    private Long id_evento, id_tipoEvento;
     private String titulo, estatus;
     private LocalDateTime fecha;
     private List<UsuarioDTO> usuarios;
@@ -15,12 +17,13 @@ public class EventoDTO {
 
     }
 
-    public EventoDTO(Long id_evento, String titulo, String estatus, LocalDateTime fecha, List<UsuarioDTO> usuarios) {
+    public EventoDTO(Long id_evento, String titulo, String estatus, LocalDateTime fecha, List<UsuarioDTO> usuarios, Long id_tipoEvento) {
         this.id_evento = id_evento;
         this.titulo = titulo;
         this.estatus = estatus;
         this.fecha = fecha;
         this.usuarios = usuarios;
+        this.id_tipoEvento = id_tipoEvento;
     }
 
     public Long getId_evento() {
@@ -61,5 +64,13 @@ public class EventoDTO {
 
     public void setUsuarios(List<UsuarioDTO> usuarios) {
         this.usuarios = usuarios;
+    }
+
+    public Long getId_tipoEvento() {
+        return id_tipoEvento;
+    }
+
+    public void setId_tipoEvento(Long id_tipoEvento) {
+        this.id_tipoEvento = id_tipoEvento;
     }
 }

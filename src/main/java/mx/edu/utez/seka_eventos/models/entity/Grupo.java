@@ -1,6 +1,9 @@
 package mx.edu.utez.seka_eventos.models.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "grupo")
@@ -20,7 +23,11 @@ public class Grupo {
     @Column(name = "municipio", nullable = false)
     private String municipio;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "grupo", cascade = CascadeType.PERSIST)
+    @JsonIgnore
+    private List<Usuario> usuarios;
+
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
@@ -28,11 +35,20 @@ public class Grupo {
 
     }
 
-    public Grupo(Long id_grupo, String nombre, String colonia, String municipio, Usuario usuario) {
+    public Grupo(Long id_grupo, String nombre, String colonia, String municipio, List<Usuario> usuarios, Usuario usuario) {
         this.id_grupo = id_grupo;
         this.nombre = nombre;
         this.colonia = colonia;
         this.municipio = municipio;
+        this.usuarios = usuarios;
+        this.usuario = usuario;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
 
@@ -68,11 +84,11 @@ public class Grupo {
         this.municipio = municipio;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public List<Usuario> getUsuarios() {
+        return usuarios;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setUsuarios(List<Usuario> usuarios) {
+        this.usuarios = usuarios;
     }
 }

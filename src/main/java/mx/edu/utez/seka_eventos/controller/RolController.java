@@ -21,7 +21,7 @@ public class RolController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<CustomResponse> getAll() {
-        return (ResponseEntity<CustomResponse>) rolService.findAll();
+    public ResponseEntity<?> getAll() {
+        return rolService.findAll();
     }
 }

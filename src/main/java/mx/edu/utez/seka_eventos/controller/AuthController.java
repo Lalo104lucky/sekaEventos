@@ -1,5 +1,6 @@
 package mx.edu.utez.seka_eventos.controller;
 
+import mx.edu.utez.seka_eventos.kernel.CustomResponse;
 import mx.edu.utez.seka_eventos.models.dto.LoginDTO;
 import mx.edu.utez.seka_eventos.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +14,15 @@ public class AuthController {
 
     @Autowired
     private AuthService authService;
+    @Autowired
+    private CustomResponse customResponse;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO dto) {
-        return authService.login(dto);
+        try {
+            return authService.login(dto.getCorreo(), dto.getContrasena());
+        }catch (Exception e){
+            return customResponse.get400Response(400);
+        }
     }
 }

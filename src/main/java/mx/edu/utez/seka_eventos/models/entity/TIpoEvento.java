@@ -1,6 +1,9 @@
 package mx.edu.utez.seka_eventos.models.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "tipoevento")
@@ -14,18 +17,18 @@ public class TIpoEvento {
     @Column(name = "nombre", nullable = false)
     private String nombre;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "id_evento")
-    private Evento evento;
+    @OneToMany(mappedBy = "tipoEvento", cascade = CascadeType.PERSIST)
+    @JsonIgnore
+    private List<Evento> eventos;
 
     public TIpoEvento() {
 
     }
 
-    public TIpoEvento(Long id_tipoevento, String nombre, Evento evento) {
+    public TIpoEvento(Long id_tipoevento, String nombre, List<Evento> eventos) {
         this.id_tipoevento = id_tipoevento;
         this.nombre = nombre;
-        this.evento = evento;
+        this.eventos = eventos;
     }
 
     public Long getId_tipoevento() {
@@ -44,11 +47,11 @@ public class TIpoEvento {
         this.nombre = nombre;
     }
 
-    public Evento getEvento() {
-        return evento;
+    public List<Evento> getEventos() {
+        return eventos;
     }
 
-    public void setEvento(Evento evento) {
-        this.evento = evento;
+    public void setEventos(List<Evento> eventos) {
+        this.eventos = eventos;
     }
 }

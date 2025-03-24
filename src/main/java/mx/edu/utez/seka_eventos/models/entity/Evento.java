@@ -31,17 +31,18 @@ public class Evento {
     )
     private List<Usuario> usuarios;
 
-    @OneToMany(mappedBy = "evento", cascade = CascadeType.PERSIST)
-    @JsonIgnore
-    private List<TIpoEvento> tipoEventos;
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "id_tipoEvento")
+    private TIpoEvento tipoEvento;
 
-    public Evento(Long id_evento, String titulo, LocalDateTime fecha, String estatus, List<Usuario> usuarios, List<TIpoEvento> tipoEventos) {
+
+    public Evento(Long id_evento, String titulo, LocalDateTime fecha, String estatus, List<Usuario> usuarios, TIpoEvento tipoEvento) {
         this.id_evento = id_evento;
         this.titulo = titulo;
         this.fecha = fecha;
         this.estatus = estatus;
         this.usuarios = usuarios;
-        this.tipoEventos = tipoEventos;
+        this.tipoEvento = tipoEvento;
     }
 
     public Evento() {
@@ -88,11 +89,11 @@ public class Evento {
         this.usuarios = usuarios;
     }
 
-    public List<TIpoEvento> getTipoEventos() {
-        return tipoEventos;
+    public TIpoEvento getTipoEvento() {
+        return tipoEvento;
     }
 
-    public void setTipoEventos(List<TIpoEvento> tipoEventos) {
-        this.tipoEventos = tipoEventos;
+    public void setTipoEvento(TIpoEvento tipoEvento) {
+        this.tipoEvento = tipoEvento;
     }
 }

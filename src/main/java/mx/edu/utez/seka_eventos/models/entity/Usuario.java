@@ -2,6 +2,7 @@ package mx.edu.utez.seka_eventos.models.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import mx.edu.utez.seka_eventos.services.GrupoService;
 
 import java.util.List;
 
@@ -34,18 +35,23 @@ public class Usuario {
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "id_rol")
-    @JsonIgnore
     private Rol rol;
 
     @ManyToMany(mappedBy = "usuarios",cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     @JsonIgnore
     private List<Evento> eventos;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario")
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "id_grupo")
     @JsonIgnore
-    private List<Grupo> grupos;
+    private Grupo grupo;
 
-    public Usuario(Long id_usuario, String correo, String contrasena, String nombre, String apellido_p, String apellido_m, String telefono, Rol rol, List<Evento> eventos, List<Grupo> grupos) {
+    @OneToOne(cascade = CascadeType.PERSIST, mappedBy = "usuario")
+    @JsonIgnore
+    private Grupo grupo_usuario;
+
+
+    public Usuario(Long id_usuario, String correo, String contrasena, String nombre, String apellido_p, String apellido_m, String telefono, Rol rol, List<Evento> eventos, Grupo grupo, Grupo grupoUsuario) {
         this.id_usuario = id_usuario;
         this.correo = correo;
         this.contrasena = contrasena;
@@ -55,11 +61,20 @@ public class Usuario {
         this.telefono = telefono;
         this.rol = rol;
         this.eventos = eventos;
-        this.grupos = grupos;
+        this.grupo = grupo;
+        grupo_usuario = grupoUsuario;
     }
 
     public Usuario() {
 
+    }
+
+    public Grupo getGrupo_usuario() {
+        return grupo_usuario;
+    }
+
+    public void setGrupo_usuario(Grupo grupo_usuario) {
+        this.grupo_usuario = grupo_usuario;
     }
 
     public Long getId_usuario() {
@@ -134,11 +149,11 @@ public class Usuario {
         this.eventos = eventos;
     }
 
-    public List<Grupo> getGrupos() {
-        return grupos;
+    public Grupo getGrupo() {
+        return grupo;
     }
 
-    public void setGrupos(List<Grupo> grupos) {
-        this.grupos = grupos;
+    public void setGrupo(Grupo grupo) {
+        this.grupo = grupo;
     }
 }

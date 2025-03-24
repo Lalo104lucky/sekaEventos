@@ -2,7 +2,7 @@ package mx.edu.utez.seka_eventos.models.dto;
 
 public class UsuarioDTO {
 
-    private Long id_usuario, id_rol;
+    private Long id_usuario, id_rol, id_grupo;
     private String correo, contrasena, nombre, apellido_p, apellido_m, telefono;
 
 
@@ -10,9 +10,10 @@ public class UsuarioDTO {
 
     }
 
-    public UsuarioDTO(Long id_usuario, Long id_rol, String correo, String contrasena, String nombre, String apellido_p, String apellido_m, String telefono) {
+    public UsuarioDTO(Long id_usuario, Long id_rol, Long id_grupo, String correo, String contrasena, String nombre, String apellido_p, String apellido_m, String telefono) {
         this.id_usuario = id_usuario;
         this.id_rol = id_rol;
+        this.id_grupo = id_grupo;
         this.correo = correo;
         this.contrasena = contrasena;
         this.nombre = nombre;
@@ -83,5 +84,13 @@ public class UsuarioDTO {
 
     public void setTelefono(String telefono) {
         this.telefono = telefono;
+    }
+
+    public Long getId_grupo() {
+        return id_grupo;
+    }
+
+    public void setId_grupo(Long id_grupo) {
+        this.id_grupo = id_grupo;
     }
 }
