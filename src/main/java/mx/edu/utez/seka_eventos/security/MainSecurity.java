@@ -22,7 +22,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
-// @EnableMethodSecurity
 public class MainSecurity implements WebMvcConfigurer {
 
     @Autowired
