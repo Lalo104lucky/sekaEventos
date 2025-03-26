@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body{
+    background-color:#D0DFBE ;
+    font-family: 'Poppins', sans-serif;
+}
+.bg_dark_forest{
+    background-color: #001C0E;
+}
+.title{
+  font-family: 'Merriweather', serif;
+  font-weight: 700;
+}
