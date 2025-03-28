@@ -13,3 +13,78 @@ body{
   font-family: 'Merriweather', serif;
   font-weight: 700;
 }
+
+/* Todo esto que está aquí, es de Lalo...
+Chequen los colores desde mis componentes y datos para que sea
+más fácil de saber que estoy metiendo */
+
+.custom-datatable .p-datatable-wrapper {
+  background-color: #D0DFBE; 
+}
+
+.custom-datatable .p-datatable-thead > tr > th {
+  background-color: #D0DFBE;
+  color: #000; 
+  border-bottom: 2px solid #000;
+}
+
+.custom-datatable .p-datatable-tbody > tr > td {
+  color: #000; 
+  background-color: #D0DFBE;
+  border-bottom: 1px solid #000;
+}
+
+.custom-datatable .p-paginator {
+  background-color: #D0DFBE; 
+  padding: 10px; 
+  margin-top: 10px;
+  margin-bottom: 10px; 
+}
+
+.custom-datatable .p-paginator .p-paginator-page {
+  background-color: #B8C9A8; 
+  color: #000; 
+  border: none; 
+  border-radius: 5px; 
+  margin: 0 5px; 
+  padding: 5px 10px;
+  transition: background-color 0.3s ease;
+}
+
+.custom-datatable .p-paginator .p-paginator-page.p-highlight {
+  background-color: #001C0E; 
+  color: #fff;
+}
+
+.custom-datatable .p-paginator .p-paginator-page:hover {
+  background-color: #A0B89C; 
+  color: #000; 
+}
+
+.custom-datatable .p-paginator .p-paginator-first,
+.custom-datatable .p-paginator .p-paginator-prev,
+.custom-datatable .p-paginator .p-paginator-next,
+.custom-datatable .p-paginator .p-paginator-last {
+  background-color: #B8C9A8; 
+  color: #000; 
+  border: none;
+  border-radius: 5px; 
+  padding: 5px 10px; 
+  transition: background-color 0.3s ease;
+}
+
+.custom-datatable .p-paginator .p-paginator-first:hover,
+.custom-datatable .p-paginator .p-paginator-prev:hover,
+.custom-datatable .p-paginator .p-paginator-next:hover,
+.custom-datatable .p-paginator .p-paginator-last:hover {
+  background-color: #A0B89C;
+  color: #000; 
+}
+
+.bg-custom-green {
+  background-color: #416327;
+  color: white; 
+}
+
+/* Aún no he acabado pinshi mats pero subelo a tu rama y de aquí veo que tanto agregaste
+Nota: No me quites mis comentarios para saber que estaré metiendo después */

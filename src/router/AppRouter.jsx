@@ -7,6 +7,7 @@ import SignInPage from '../module/auth/SignInPage';
 import ForgotPasswordPage from '../module/auth/FortgotPasswordPage';
 import ResetPasswordPage from '../module/auth/ResetPasswordPage';
 import AuthContext from '../config/context/auth-context';
+import Events from '../module/adminGroup/Events';
 
 const AppRouter = () => {
     const { user } = useContext(AuthContext);
@@ -28,9 +29,14 @@ const AppRouter = () => {
                 {user?.token ? (
                     <>
                         {role === "ADMIN" ? (
-                            <Route path="*" element={<AdminLayout perfilData={""} />} />
+                            <Route path="/" element={<AdminLayout/>}>
+                                
+                            </Route>
+
                         ) : role === "ADMIN_GROUP" ? (
-                            <Route path="*" element={<AdminGroupLayout perfilData={""} />} />
+                            <Route path="*" element={<AdminGroupLayout perfilData={""} />}>
+                                <Route index element={<Events />}></Route>
+                            </Route>
                         ) : (
                             <Route path="*" element={<MemberLayout perfilData={""} />} />
                         )}
