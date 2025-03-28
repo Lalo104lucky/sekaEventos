@@ -9,6 +9,11 @@ body{
 .bg_dark_forest{
     background-color: #001C0E;
 }
+
+.dark_forest{
+  color: #001C0E;
+}
+
 .title{
   font-family: 'Merriweather', serif;
   font-weight: 700;
@@ -84,6 +89,28 @@ más fácil de saber que estoy metiendo */
 .bg-custom-green {
   background-color: #416327;
   color: white; 
+}
+
+.bg-custom-yellow {
+  background-color: #F4D03F;
+  color: black; 
+}
+
+.bg-custom-red {
+  background-color: #C0392B;
+  color: white; 
+}
+
+.bg-custom-greenlight {
+  background-color: #EDFFDF; 
+}
+
+.custom-border-blue {
+  border: 2px solid #0F3714 !important; 
+}
+
+.custom-border-bottom {
+  border-bottom: 2px solid #0F3714 !important; 
 }
 
 /* Aún no he acabado pinshi mats pero subelo a tu rama y de aquí veo que tanto agregaste

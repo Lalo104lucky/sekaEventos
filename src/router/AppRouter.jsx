@@ -8,6 +8,8 @@ import ForgotPasswordPage from '../module/auth/FortgotPasswordPage';
 import ResetPasswordPage from '../module/auth/ResetPasswordPage';
 import AuthContext from '../config/context/auth-context';
 import Events from '../module/adminGroup/Events';
+import Members from '../module/adminGroup/Members';
+import Profile from '../module/adminGroup/Profile';
 
 const AppRouter = () => {
     const { user } = useContext(AuthContext);
@@ -34,8 +36,10 @@ const AppRouter = () => {
                             </Route>
 
                         ) : role === "ADMIN_GROUP" ? (
-                            <Route path="*" element={<AdminGroupLayout perfilData={""} />}>
-                                <Route index element={<Events />}></Route>
+                            <Route path="/" element={<AdminGroupLayout/>}>
+                                <Route index element={<Events />} />
+                                <Route path='/miembros' element={<Members />} />
+                                <Route path='/cuenta' element={<Profile />}></Route>
                             </Route>
                         ) : (
                             <Route path="*" element={<MemberLayout perfilData={""} />} />

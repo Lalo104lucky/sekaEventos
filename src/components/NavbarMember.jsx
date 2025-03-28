@@ -57,7 +57,6 @@ const NavbarMember = () => {
                 </svg>
               </button>
 
-              {/* Menú dropdown - Visible cuando isDropdownOpen es true */}
               <div
                 className={`z-10 ${isDropdownOpen ? 'block' : 'hidden'} absolute right-0 mt-2 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700`}
               >

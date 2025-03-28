@@ -20,11 +20,11 @@ const SignInPage = () => {
 
     const formik = useFormik({
         initialValues: {
-            correo: "",
+            usuario: "",
             contrasena: "",
         },
         validationSchema: yup.object().shape({
-            correo: yup.string().email("Ingrese un correo válido").required("Campo obligatorio"),
+            usuario: yup.string().required("Campo obligatorio"),
             contrasena: yup.string().required("Campo obligatorio"),
         }),
         onSubmit: async (values, { setSubmitting }) => {
@@ -75,19 +75,19 @@ const SignInPage = () => {
                     <form className="space-y-4 w-full" noValidate onSubmit={formik.handleSubmit}>
                         <div className="relative mb-2">
                             <input
-                                type="correo"
-                                id="correo"
-                                name="correo"
+                                type="usuario"
+                                id="usuario"
+                                name="usuario"
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
-                                value={formik.values.correo}
-                                autoComplete="correo"
+                                value={formik.values.usuario}
+                                autoComplete="usuario"
                                 required
                                 className="w-full border border-gray-300 p-2 mb-3"
-                                placeholder="Correo Electrónico"
+                                placeholder="Usuario"
                             />
-                            {formik.touched.correo && formik.errors.correo && (
-                                <div className="text-red-600 text-sm">{formik.errors.correo}</div>
+                            {formik.touched.usuario && formik.errors.usuario && (
+                                <div className="text-red-600 text-sm">{formik.errors.usuario}</div>
                             )}
                         </div>
 
