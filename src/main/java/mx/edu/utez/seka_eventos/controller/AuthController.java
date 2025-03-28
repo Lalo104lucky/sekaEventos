@@ -20,7 +20,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO dto) {
         try {
-            return authService.login(dto.getCorreo(), dto.getContrasena());
+            return authService.login(dto.getUsuario(), dto.getContrasena());
         }catch (Exception e){
             return customResponse.get400Response(400);
         }

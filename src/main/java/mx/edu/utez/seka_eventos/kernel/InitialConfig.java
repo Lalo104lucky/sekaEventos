@@ -36,13 +36,13 @@ public class InitialConfig implements CommandLineRunner {
             rolRepository.saveRol(3L, "USER");
         }
         if (!usuarioRepository.existsById(1L)) {
-            usuarioRepository.saveUsuario(1L, "20223tn021@utez.edu.mx", encoder.encode("JaimezFlores104"), "Diego Eduardo", "Jaimez", "Flores", "7772363510", 1L );
+            usuarioRepository.saveUsuario(1L, "Lalo104lucky","20223tn021@utez.edu.mx", encoder.encode("JaimezFlores104"), "Diego Eduardo", "Jaimez", "Flores", "7772363510", 1L );
         }
         if (!usuarioRepository.existsById(2L)) {
-            usuarioRepository.saveUsuario(2L, "20203tn072@utez.edu.mx", encoder.encode("123456"), "Abraham", "Avelino", "Pichardo", "7771234567", 2L );
+            usuarioRepository.saveUsuario(2L, "Abraham Lincon","20203tn072@utez.edu.mx", encoder.encode("123456"), "Abraham", "Avelino", "Pichardo", "7771234567", 2L );
         }
         if (!usuarioRepository.existsById(3L)) {
-            usuarioRepository.saveUsuario(3L, "20223tn023@utez.edu.mx", encoder.encode("123456"), "Carlos Axel", "Martinez", "Clemente", "7771234567", 3L );
+            usuarioRepository.saveUsuario(3L, "Axelito","20223tn023@utez.edu.mx", encoder.encode("123456"), "Carlos Axel", "Martinez", "Clemente", "7771234567", 3L );
         }
     }
 

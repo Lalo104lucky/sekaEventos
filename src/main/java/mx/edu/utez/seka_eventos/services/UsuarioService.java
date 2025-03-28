@@ -54,6 +54,7 @@ public class UsuarioService {
         }
         Rol rol = foundRol.get();
         Usuario usuario = new Usuario();
+        usuario.setUsuario(usuarioDTO.getUsuario());
         usuario.setApellido_m(usuarioDTO.getApellido_m());
         usuario.setApellido_p(usuarioDTO.getApellido_p());
         usuario.setContrasena(encoder.encode(usuarioDTO.getContrasena()));
@@ -71,6 +72,7 @@ public class UsuarioService {
             return customResponse.get400Response(400);
         }
         Usuario usuario = foundUser.get();
+        usuario.setUsuario(usuarioDTO.getUsuario());
         usuario.setApellido_m(usuarioDTO.getApellido_m());
         usuario.setApellido_p(usuarioDTO.getApellido_p());
         usuario.setContrasena(encoder.encode(usuarioDTO.getContrasena()));
@@ -108,8 +110,8 @@ public class UsuarioService {
     }
 
     @Transactional
-    public Optional<Usuario> findUserByCorreo(String correo) {
-        return repository.findUsuarioByCorreo(correo);
+    public Optional<Usuario> findUsuario(String usuario) {
+        return repository.findUsuarioByUsuario(usuario);
     }
 
 }

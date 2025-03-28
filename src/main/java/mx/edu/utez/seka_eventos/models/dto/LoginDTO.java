@@ -2,23 +2,23 @@ package mx.edu.utez.seka_eventos.models.dto;
 
 public class LoginDTO {
 
-    private String correo, contrasena;
+    private String usuario, contrasena;
 
     public LoginDTO() {
 
     }
 
-    public LoginDTO(String correo, String contrasena) {
-        this.correo = correo;
+    public LoginDTO(String usuario, String contrasena) {
+        this.usuario = usuario;
         this.contrasena = contrasena;
     }
 
-    public String getCorreo() {
-        return correo;
+    public String getUsuario() {
+        return usuario;
     }
 
-    public void setCorreo(String correo) {
-        this.correo = correo;
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
     public String getContrasena() {

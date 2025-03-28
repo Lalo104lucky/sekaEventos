@@ -2,7 +2,6 @@ package mx.edu.utez.seka_eventos.models.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import mx.edu.utez.seka_eventos.services.GrupoService;
 
 import java.util.List;
 
@@ -14,6 +13,9 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_usuario", nullable = false)
     private Long id_usuario;
+
+    @Column(name = "usuario", nullable = false)
+    private String usuario;
 
     @Column(name = "correo", nullable = false)
     private String correo;
@@ -51,8 +53,9 @@ public class Usuario {
     private Grupo grupo_usuario;
 
 
-    public Usuario(Long id_usuario, String correo, String contrasena, String nombre, String apellido_p, String apellido_m, String telefono, Rol rol, List<Evento> eventos, Grupo grupo, Grupo grupoUsuario) {
+    public Usuario(Long id_usuario, String usuario, String correo, String contrasena, String nombre, String apellido_p, String apellido_m, String telefono, Rol rol, List<Evento> eventos, Grupo grupo, Grupo grupo_usuario) {
         this.id_usuario = id_usuario;
+        this.usuario = usuario;
         this.correo = correo;
         this.contrasena = contrasena;
         this.nombre = nombre;
@@ -62,19 +65,11 @@ public class Usuario {
         this.rol = rol;
         this.eventos = eventos;
         this.grupo = grupo;
-        grupo_usuario = grupoUsuario;
+        this.grupo_usuario = grupo_usuario;
     }
 
     public Usuario() {
 
-    }
-
-    public Grupo getGrupo_usuario() {
-        return grupo_usuario;
-    }
-
-    public void setGrupo_usuario(Grupo grupo_usuario) {
-        this.grupo_usuario = grupo_usuario;
     }
 
     public Long getId_usuario() {
@@ -83,6 +78,14 @@ public class Usuario {
 
     public void setId_usuario(Long id_usuario) {
         this.id_usuario = id_usuario;
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
     public String getCorreo() {
@@ -155,5 +158,13 @@ public class Usuario {
 
     public void setGrupo(Grupo grupo) {
         this.grupo = grupo;
+    }
+
+    public Grupo getGrupo_usuario() {
+        return grupo_usuario;
+    }
+
+    public void setGrupo_usuario(Grupo grupo_usuario) {
+        this.grupo_usuario = grupo_usuario;
     }
 }

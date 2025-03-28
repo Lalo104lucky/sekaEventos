@@ -26,8 +26,8 @@ public class UserDetailsImplService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String correo) throws UsernameNotFoundException {
-        Optional<Usuario> foundUsuario = service.findUserByCorreo(correo);
+    public UserDetails loadUserByUsername(String usuario) throws UsernameNotFoundException {
+        Optional<Usuario> foundUsuario = service.findUsuario(usuario);
         if (foundUsuario.isEmpty()) {
             throw new UsernameNotFoundException("Usuario no encontrado");
         } else {

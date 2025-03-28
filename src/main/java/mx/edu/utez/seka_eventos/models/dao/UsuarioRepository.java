@@ -11,15 +11,15 @@ import java.util.Optional;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-    Optional<Usuario> findUsuarioByCorreo(String correo);
+    Optional<Usuario> findUsuarioByUsuario(String usuario);
 
-    @Query(value = "SELECT * FROM usuario WHERE correo = :correo AND contrasena = :contrasena", nativeQuery = true)
-    Usuario findByCorreoAndContrasena(@Param("correo") String correo, @Param("contrasena") String contrasena);
+    @Query(value = "SELECT * FROM usuario WHERE usuario = :usuario AND contrasena = :contrasena", nativeQuery = true)
+    Usuario findByUsuarioAndContrasena(@Param("usuario") String usuario, @Param("contrasena") String contrasena);
 
-    @Query(value = "SELECT * FROM usuario WHERE correo = :correo", nativeQuery = true)
-    Usuario findByCorreo(@Param("correo") String correo);
+    @Query(value = "SELECT * FROM usuario WHERE usuario = :usuario", nativeQuery = true)
+    Usuario findByUser(@Param("usuario") String usuario);
 
     @Modifying
-    @Query(value = "INSERT INTO usuario (id_usuario, correo, contrasena, nombre, apellido_p, apellido_m, telefono, id_rol) VALUES (:id_usuario, :correo, :contrasena, :nombre, :apellido_p, :apellido_m, :telefono, :id_rol)", nativeQuery = true)
-    int saveUsuario(@Param("id_usuario") Long id_usuario, @Param("correo") String correo, @Param("contrasena") String contrasena, @Param("nombre") String nombre, @Param("apellido_p") String apellido_p, @Param("apellido_m") String apellido_m, @Param("telefono") String telefono, @Param("id_rol") Long id_rol);
+    @Query(value = "INSERT INTO usuario (id_usuario, usuario, correo, contrasena, nombre, apellido_p, apellido_m, telefono, id_rol) VALUES (:id_usuario, :usuario,:correo, :contrasena, :nombre, :apellido_p, :apellido_m, :telefono, :id_rol)", nativeQuery = true)
+    int saveUsuario(@Param("id_usuario") Long id_usuario, @Param("usuario") String usuario, @Param("correo") String correo, @Param("contrasena") String contrasena, @Param("nombre") String nombre, @Param("apellido_p") String apellido_p, @Param("apellido_m") String apellido_m, @Param("telefono") String telefono, @Param("id_rol") Long id_rol);
 }

@@ -3,14 +3,14 @@ package mx.edu.utez.seka_eventos.models.dto;
 public class UsuarioDTO {
 
     private Long id_usuario, id_rol, id_grupo;
-    private String correo, contrasena, nombre, apellido_p, apellido_m, telefono;
+    private String correo, contrasena, nombre, apellido_p, apellido_m, telefono, usuario;
 
 
     public UsuarioDTO() {
 
     }
 
-    public UsuarioDTO(Long id_usuario, Long id_rol, Long id_grupo, String correo, String contrasena, String nombre, String apellido_p, String apellido_m, String telefono) {
+    public UsuarioDTO(Long id_usuario, Long id_rol, Long id_grupo, String correo, String contrasena, String nombre, String apellido_p, String apellido_m, String telefono, String usuario) {
         this.id_usuario = id_usuario;
         this.id_rol = id_rol;
         this.id_grupo = id_grupo;
@@ -20,6 +20,7 @@ public class UsuarioDTO {
         this.apellido_p = apellido_p;
         this.apellido_m = apellido_m;
         this.telefono = telefono;
+        this.usuario = usuario;
     }
 
     public Long getId_usuario() {
@@ -36,6 +37,14 @@ public class UsuarioDTO {
 
     public void setId_rol(Long id_rol) {
         this.id_rol = id_rol;
+    }
+
+    public Long getId_grupo() {
+        return id_grupo;
+    }
+
+    public void setId_grupo(Long id_grupo) {
+        this.id_grupo = id_grupo;
     }
 
     public String getCorreo() {
@@ -86,11 +95,11 @@ public class UsuarioDTO {
         this.telefono = telefono;
     }
 
-    public Long getId_grupo() {
-        return id_grupo;
+    public String getUsuario() {
+        return usuario;
     }
 
-    public void setId_grupo(Long id_grupo) {
-        this.id_grupo = id_grupo;
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 }

@@ -12,12 +12,12 @@ import java.util.Set;
 
 public class UserDetailsImpl implements UserDetails {
 
-    private String correo;
+    private String usuario;
     private String contrasena;
     private Set<GrantedAuthority> authorities;
 
-    public UserDetailsImpl(String correo, String contrasena, Set<GrantedAuthority> authorities) {
-        this.correo = correo;
+    public UserDetailsImpl(String usuario, String contrasena, Set<GrantedAuthority> authorities) {
+        this.usuario = usuario;
         this.contrasena = contrasena;
         this.authorities = authorities;
     }
@@ -25,7 +25,7 @@ public class UserDetailsImpl implements UserDetails {
     public static UserDetailsImpl build(Usuario usuario) {
         Set<GrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_" + usuario.getRol().getRol()));
         System.out.println("authorities: " + authorities);
-        return new UserDetailsImpl(usuario.getCorreo(), usuario.getContrasena(), authorities);
+        return new UserDetailsImpl(usuario.getUsuario(), usuario.getContrasena(), authorities);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getUsername() {
-        return correo;
+        return usuario;
     }
 
     @Override

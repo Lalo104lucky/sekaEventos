@@ -38,18 +38,18 @@ public class AuthService {
     private UsuarioRepository repository;
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> login(String correo, String contrasena) {
+    public ResponseEntity<?> login(String usuario, String contrasena) {
         try{
-            Optional<Usuario> foundUsuario = service.findUserByCorreo(correo);
+            Optional<Usuario> foundUsuario = service.findUsuario(usuario);
             if (foundUsuario.isEmpty()) {
                 return customResponse.get400Response(404);
             }
-            Usuario usuario = foundUsuario.get();
-            System.out.println("Usuario Encontrado: " + usuario.getCorreo());
-            Authentication auth = manager.authenticate(new UsernamePasswordAuthenticationToken(correo, contrasena));
+            Usuario usuarioEncontrado = foundUsuario.get();
+            System.out.println("Usuario Encontrado: " + usuarioEncontrado.getUsuario());
+            Authentication auth = manager.authenticate(new UsernamePasswordAuthenticationToken(usuario, contrasena));
             SecurityContextHolder.getContext().setAuthentication(auth);
             String token = provider.generateToken(auth);
-            LoginIntoDTO logined = new LoginIntoDTO(token, "Bearer", usuario);
+            LoginIntoDTO logined = new LoginIntoDTO(token, "Bearer", usuarioEncontrado);
             return customResponse.getOkResponse(logined);
         } catch (Exception e){
             String message = "CredentialMismatch";
