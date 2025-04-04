@@ -111,5 +111,36 @@ public class EventoService {
         return customResponse.getOkResponse("Asistencia confirmada");
     }
 
+    @Transactional(rollbackFor = {SQLException.class})
+    public ResponseEntity<?> cancelAsistencia(Long eventoId, Long usuarioId) {
+        Optional<Evento> foundEvento = repository.findById(eventoId);
+        if(foundEvento.isEmpty()){
+            return customResponse.get400Response(404);
+        }
+        Optional<Usuario> foundUsuario = usuarioRepository.findById(usuarioId);
+        if(foundUsuario.isEmpty()){
+            return customResponse.get400Response(404);
+        }
+
+        Evento evento = foundEvento.get();
+        Usuario usuario = foundUsuario.get();
+        if (evento.getUsuarios().contains(usuario)) {
+            evento.getUsuarios().remove(usuario);
+            eventoRepository.save(evento);
+        }
+        return customResponse.getOkResponse("Asistencia cancelada");
+    }
+
+    @Transactional(rollbackFor = {SQLException.class})
+    public ResponseEntity<?> changeStatus (Long eventoId, EventoDTO eventoDTO) {
+        Optional<Evento> foundEvento = repository.findById(eventoId);
+        if(foundEvento.isEmpty()){
+            return customResponse.get400Response(404);
+        }
+        Evento evento = foundEvento.get();
+        evento.setEstatus(eventoDTO.getEstatus());
+        return customResponse.getOkResponse(repository.save(evento));
+    }
+
 
 }

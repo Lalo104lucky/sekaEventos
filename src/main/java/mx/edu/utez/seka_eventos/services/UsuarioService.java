@@ -114,4 +114,9 @@ public class UsuarioService {
         return repository.findUsuarioByUsuario(usuario);
     }
 
+    @Transactional
+    public Optional<Usuario> findUsuarioByCorreo(String correo) {
+        return repository.findUsuarioByCorreo(correo);
+    }
+
 }

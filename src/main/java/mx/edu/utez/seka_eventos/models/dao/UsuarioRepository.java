@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findUsuarioByUsuario(String usuario);
 
+    Optional<Usuario> findUsuarioByCorreo(String correo);
+
     @Query(value = "SELECT * FROM usuario WHERE usuario = :usuario AND contrasena = :contrasena", nativeQuery = true)
     Usuario findByUsuarioAndContrasena(@Param("usuario") String usuario, @Param("contrasena") String contrasena);
 

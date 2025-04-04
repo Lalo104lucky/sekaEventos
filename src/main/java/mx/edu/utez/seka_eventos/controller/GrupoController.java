@@ -3,6 +3,7 @@ package mx.edu.utez.seka_eventos.controller;
 import mx.edu.utez.seka_eventos.kernel.CustomResponse;
 import mx.edu.utez.seka_eventos.models.dto.GrupoDTO;
 import mx.edu.utez.seka_eventos.services.GrupoService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,21 +25,37 @@ public class GrupoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(Long id) {
-        return grupoService.findById(id);
+        try {
+            return grupoService.findById(id);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/")
     public ResponseEntity<?> create(@RequestBody GrupoDTO grupoDTO) {
-        return grupoService.register(grupoDTO);
+        try{
+            return grupoService.register(grupoDTO);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@RequestBody GrupoDTO grupoDTO) {
-        return grupoService.update(grupoDTO);
+        try {
+            return grupoService.update(grupoDTO);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(Long id) {
-        return grupoService.delete(id);
+        try {
+            return grupoService.delete(id);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

@@ -2,7 +2,6 @@ package mx.edu.utez.seka_eventos.services;
 
 import mx.edu.utez.seka_eventos.kernel.CustomResponse;
 import mx.edu.utez.seka_eventos.models.dao.UsuarioRepository;
-import mx.edu.utez.seka_eventos.models.dto.LoginDTO;
 import mx.edu.utez.seka_eventos.models.dto.LoginIntoDTO;
 import mx.edu.utez.seka_eventos.models.entity.Usuario;
 import mx.edu.utez.seka_eventos.security.jwt.JWTProvider;
