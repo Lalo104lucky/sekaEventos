@@ -1,7 +1,7 @@
 import React from 'react';
-import NavbarMember from '../../components/NavbarMember';
-import FeaturedEvent from '../../components/FeaturedEvent';
-import EventCard from '../../components/EventCard';
+import NavbarMember from './components/NavbarMember';
+import FeaturedEvent from './components/FeaturedEvent';
+import EventCard from './components/EventCard';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';

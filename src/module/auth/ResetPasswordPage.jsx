@@ -60,8 +60,8 @@ const ResetPasswordPage = () => {
                 <div className="hidden md:flex w-1/2 h-full relative">
                     <img src={FondoLogin} alt="IniciodeSesión" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center p-6 text-white" style={{ top: '25%' }}>
-                        <h2 className="text-5xl font-bold">Cuida el Planeta</h2>
-                        <p className="text-2xl mt-6 font-bold text-center">
+                        <h2 className="text-5xl font-bold text-stroke">Cuida el Planeta</h2>
+                        <p className="text-2xl mt-6 font-bold text-center text-stroke">
                             Recupera tu acceso y sigue contribuyendo al cuidado del planeta.
                         </p>
                     </div>

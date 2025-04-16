@@ -18,6 +18,7 @@ const NavbarAdminGroup = () => {
     sessionStorage.removeItem("user");
     dispatch({ type: "SIGNOUT" });
     navigate("/");
+  
   };
 
   useEffect(() => {

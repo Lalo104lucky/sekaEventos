@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import AdminLayout from "../module/admin/AdminLayout";
 import AdminGroupLayout from '../module/adminGroup/AdminGroupLayout';
@@ -10,6 +10,13 @@ import AuthContext from '../config/context/auth-context';
 import Events from '../module/adminGroup/Events';
 import Members from '../module/adminGroup/Members';
 import Profile from '../module/adminGroup/Profile';
+import Page401 from '../module/auth/Page401';
+import ProtectedRoute from './ProtectedRouter';
+import EventList from '../module/member/components/EventList';
+import ProfileMember from '../module/member/Profile';
+import EventsAdmin from '../module/admin/EventsAdmin';
+import Groups from '../module/admin/Groups';
+import AdminGroups from '../module/admin/AdminGroups';
 
 const AppRouter = () => {
     const { user } = useContext(AuthContext);
@@ -31,18 +38,36 @@ const AppRouter = () => {
                 {user?.token ? (
                     <>
                         {role === "ADMIN" ? (
-                            <Route path="/" element={<AdminLayout/>}>
-                                
+                            <Route path="/" element={
+                                <ProtectedRoute isAllowed={role === "ADMIN"}>
+                                    <AdminLayout />
+                                </ProtectedRoute>
+                            }>
+                                <Route index element={<EventsAdmin />} />
+                                <Route path='/grupos' element={<Groups />} />
+                                <Route path='/admingroups' element={<AdminGroups />} />
+                                {/* <Route path='/cuenta' element={<Profile />} /> */}
                             </Route>
 
                         ) : role === "ADMIN_GROUP" ? (
-                            <Route path="/" element={<AdminGroupLayout/>}>
+                            <Route path="/" element={
+                                <ProtectedRoute isAllowed={role === "ADMIN_GROUP"}>
+                                    <AdminGroupLayout />
+                                </ProtectedRoute>
+                            }>
                                 <Route index element={<Events />} />
                                 <Route path='/miembros' element={<Members />} />
-                                <Route path='/cuenta' element={<Profile />}></Route>
+                                <Route path='/perfil' element={<Profile />} />
                             </Route>
                         ) : (
-                            <Route path="*" element={<MemberLayout perfilData={""} />} />
+                            <Route path="/" element={
+                                <ProtectedRoute isAllowed={role === "USER"}>
+                                    <MemberLayout />
+                                </ProtectedRoute>
+                            }>
+                                <Route index path="/" element={<EventList />} />
+                                <Route path="/perfil-miembro" element={<ProfileMember />} />
+                            </Route>
                         )}
                     </>
                 ) : (
@@ -50,6 +75,7 @@ const AppRouter = () => {
                         <Route path="/" element={<SignInPage />} />
                         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                         <Route path="/reset-password" element={<ResetPasswordPage />} />
+                        <Route path="*" element={<Page401 />} />
                     </>
                 )}
             </Routes>

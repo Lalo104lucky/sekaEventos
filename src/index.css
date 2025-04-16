@@ -19,6 +19,59 @@ body{
   font-weight: 700;
 }
 
+
+.colorInput{
+  background-color: #D0DFBE;
+  border-color: #416327;
+}
+.colorInput:focus{
+  box-shadow: 0 0 0 2px #001C0E;
+  border-color: #001C0E;
+}
+
+.cancelButton{
+  background-color: transparent;
+  color: #001C0E;
+  border: 1px solid #001C0E; 
+}
+
+.cancelButton:focus{
+  background-color: #001C0E;
+  color: #fff;
+  border: 1px solid #001C0E; 
+  box-shadow: 0 0 0 2px #416327;
+}
+
+.styleButton{
+  background-color: #001C0E;
+  color: #fff;
+  border: 1px solid #416327; 
+}
+
+.styleButton:focus{
+  background-color: #416327;
+  color: #fff;
+  border: 1px solid #001C0E; 
+  box-shadow: 0 0 0 2px #416327;
+}
+.styleButton:hover{
+  background-color: #416327;
+  color: #fff;
+  border: 1px solid #001C0E; 
+  box-shadow: 0 0 0 2px #416327;
+}
+
+.border-sage{
+  border: 2px solid #416327; 
+}
+
+.line-sage{
+background-color: #416327;
+}
+.color-dark{
+  color: #416327;
+}
+
 /* Todo esto que está aquí, es de Lalo...
 Chequen los colores desde mis componentes y datos para que sea
 más fácil de saber que estoy metiendo */
@@ -40,7 +93,7 @@ más fácil de saber que estoy metiendo */
 }
 
 .custom-datatable .p-paginator {
-  background-color: #D0DFBE; 
+  background-color: #d0dfbe; 
   padding: 10px; 
   margin-top: 10px;
   margin-bottom: 10px; 
@@ -111,6 +164,43 @@ más fácil de saber que estoy metiendo */
 
 .custom-border-bottom {
   border-bottom: 2px solid #0F3714 !important; 
+}
+
+.custom-alert-success {
+  border-radius: 10px;
+  padding: 20px; 
+  background-color: #ffffff;
+  max-width: 400px; 
+  border-top: 10px solid #3BA936; 
+}
+
+.custom-alert-error {
+  border-radius: 10px;
+  padding: 20px; 
+  background-color: #ffffff;
+  max-width: 400px; 
+  border-top: 10px solid #AB0D2E; 
+}
+
+.custom-alert-loading {
+  border-radius: 10px;
+  padding: 20px; 
+  background-color: #ffffff;
+  max-width: 400px; 
+  border-top: 10px solid #3F54D1; 
+}
+
+.custom-alert-pregunta {
+  border-radius: 10px;
+  padding: 20px; 
+  background-color: #ffffff;
+  max-width: 400px;
+  border-top: 10px solid #3F54D1; 
+}
+
+.text-stroke {
+  -webkit-text-stroke: 1px #0000003b;
+  color: white; 
 }
 
 /* Aún no he acabado pinshi mats pero subelo a tu rama y de aquí veo que tanto agregaste
