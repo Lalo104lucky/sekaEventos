@@ -24,6 +24,9 @@ public class Evento {
     @Column(name = "estatus")
     private String estatus;
 
+    @Column(name = "imagen")
+    private String imagen;
+
     @ManyToMany
     @JoinTable(name = "evento_has_usuario",
             joinColumns = @JoinColumn(name = "id_usuario"),
@@ -36,13 +39,14 @@ public class Evento {
     private TIpoEvento tipoEvento;
 
 
-    public Evento(Long id_evento, String titulo, LocalDateTime fecha, String estatus, List<Usuario> usuarios, TIpoEvento tipoEvento) {
+    public Evento(Long id_evento, String titulo, LocalDateTime fecha, String estatus, List<Usuario> usuarios, TIpoEvento tipoEvento, String imagen) {
         this.id_evento = id_evento;
         this.titulo = titulo;
         this.fecha = fecha;
         this.estatus = estatus;
         this.usuarios = usuarios;
         this.tipoEvento = tipoEvento;
+        this.imagen = imagen;
     }
 
     public Evento() {
@@ -95,5 +99,13 @@ public class Evento {
 
     public void setTipoEvento(TIpoEvento tipoEvento) {
         this.tipoEvento = tipoEvento;
+    }
+
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
     }
 }

@@ -9,7 +9,7 @@ import java.util.List;
 public class EventoDTO {
 
     private Long id_evento, id_tipoEvento;
-    private String titulo, estatus;
+    private String titulo, estatus, imagen;
     private LocalDateTime fecha;
     private List<UsuarioDTO> usuarios;
 
@@ -17,13 +17,14 @@ public class EventoDTO {
 
     }
 
-    public EventoDTO(Long id_evento, String titulo, String estatus, LocalDateTime fecha, List<UsuarioDTO> usuarios, Long id_tipoEvento) {
+    public EventoDTO(Long id_evento, String titulo, String estatus, LocalDateTime fecha, List<UsuarioDTO> usuarios, Long id_tipoEvento, String imagen) {
         this.id_evento = id_evento;
         this.titulo = titulo;
         this.estatus = estatus;
         this.fecha = fecha;
         this.usuarios = usuarios;
         this.id_tipoEvento = id_tipoEvento;
+        this.imagen = imagen;
     }
 
     public Long getId_evento() {
@@ -72,5 +73,13 @@ public class EventoDTO {
 
     public void setId_tipoEvento(Long id_tipoEvento) {
         this.id_tipoEvento = id_tipoEvento;
+    }
+
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
     }
 }

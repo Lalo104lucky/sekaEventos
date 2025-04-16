@@ -5,6 +5,7 @@ import mx.edu.utez.seka_eventos.services.EventoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/evento")
@@ -32,18 +33,18 @@ public class EventoController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> create(@RequestBody EventoDTO eventoDTO) {
+    public ResponseEntity<?> create(@RequestPart("eventoDTO") EventoDTO eventoDTO, @RequestPart("imagen") MultipartFile imagen) {
         try {
-            return eventoService.register(eventoDTO);
+            return eventoService.register(eventoDTO, imagen);
         } catch (Exception e){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody EventoDTO eventoDTO) {
+    public ResponseEntity<?> update(@RequestPart("eventoDTO") EventoDTO eventoDTO, @RequestPart("imagen") MultipartFile imagen) {
         try {
-            return eventoService.update(eventoDTO);
+            return eventoService.update(eventoDTO, imagen);
         } catch (Exception e){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

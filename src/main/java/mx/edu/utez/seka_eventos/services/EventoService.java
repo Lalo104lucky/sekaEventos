@@ -11,7 +11,12 @@ import mx.edu.utez.seka_eventos.models.entity.Usuario;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +24,7 @@ import java.util.Optional;
 @Service
 public class EventoService {
 
+    private static final String IMAGE_FOLDER = "src/main/resources/images/";
     private final EventoRepository repository;
     private final CustomResponse customResponse;
     private final TipoEventoRepository tipoEventoRepository;
@@ -49,36 +55,50 @@ public class EventoService {
     }
 
     @Transactional(rollbackFor = {SQLException.class})
-    public ResponseEntity<?> register(EventoDTO eventoDTO){
-        Optional<TIpoEvento> foundTipoEvento = tipoEventoRepository.findById(eventoDTO.getId_tipoEvento());
-        if(foundTipoEvento.isEmpty()){
-            return customResponse.get400Response(404);
+    public ResponseEntity<?> register(EventoDTO eventoDTO, MultipartFile imagen){
+        try {
+            Optional<TIpoEvento> foundTipoEvento = tipoEventoRepository.findById(eventoDTO.getId_tipoEvento());
+            if(foundTipoEvento.isEmpty()){
+                return customResponse.get400Response(404);
+            }
+            String imagePath = saveImage(imagen);
+            TIpoEvento tIpoEvento = foundTipoEvento.get();
+            Evento evento = new Evento();
+            evento.setTitulo(eventoDTO.getTitulo());
+            evento.setFecha(eventoDTO.getFecha());
+            evento.setEstatus(eventoDTO.getEstatus());
+            evento.setTipoEvento(tIpoEvento);
+            evento.setImagen(imagePath);
+            return customResponse.getCreatedResponse(repository.save(evento));
+        } catch (IOException e){
+            return customResponse.get400Response(500);
         }
-        TIpoEvento tIpoEvento = foundTipoEvento.get();
-        Evento evento = new Evento();
-        evento.setTitulo(eventoDTO.getTitulo());
-        evento.setFecha(eventoDTO.getFecha());
-        evento.setEstatus(eventoDTO.getEstatus());
-        evento.setTipoEvento(tIpoEvento);
-        return customResponse.getCreatedResponse(repository.save(evento));
+
     }
 
     @Transactional(rollbackFor = {SQLException.class})
-    public ResponseEntity<?> update(EventoDTO eventoDTO){
-        Optional<Evento> foundEvento = repository.findById(eventoDTO.getId_evento());
-        if(foundEvento.isEmpty()){
-            return customResponse.get400Response(404);
+    public ResponseEntity<?> update(EventoDTO eventoDTO, MultipartFile imagen){
+        try{
+            Optional<Evento> foundEvento = repository.findById(eventoDTO.getId_evento());
+            if(foundEvento.isEmpty()){
+                return customResponse.get400Response(404);
+            }
+            String imagePath = saveImage(imagen);
+            Evento evento = foundEvento.get();
+            evento.setTitulo(eventoDTO.getTitulo());
+            evento.setFecha(eventoDTO.getFecha());
+            evento.setEstatus(eventoDTO.getEstatus());
+            evento.setImagen(imagePath);
+            Optional<TIpoEvento> foundTipoEvento = tipoEventoRepository.findById(eventoDTO.getId_tipoEvento());
+            if(foundTipoEvento.isEmpty()){
+                return customResponse.get400Response(404);
+            }
+            evento.setTipoEvento(foundTipoEvento.get());
+            return customResponse.getOkResponse(repository.save(evento));
+        } catch (IOException e) {
+            return customResponse.get400Response(500);
         }
-        Evento evento = foundEvento.get();
-        evento.setTitulo(eventoDTO.getTitulo());
-        evento.setFecha(eventoDTO.getFecha());
-        evento.setEstatus(eventoDTO.getEstatus());
-        Optional<TIpoEvento> foundTipoEvento = tipoEventoRepository.findById(eventoDTO.getId_tipoEvento());
-        if(foundTipoEvento.isEmpty()){
-            return customResponse.get400Response(404);
-        }
-        evento.setTipoEvento(foundTipoEvento.get());
-        return customResponse.getOkResponse(repository.save(evento));
+
     }
 
     @Transactional(rollbackFor = {SQLException.class})
@@ -142,5 +162,14 @@ public class EventoService {
         return customResponse.getOkResponse(repository.save(evento));
     }
 
+    private String saveImage(MultipartFile image) throws IOException {
+        if (image != null && !image.isEmpty()) {
+            String imagePath = IMAGE_FOLDER + image.getOriginalFilename();
+            Path path = Paths.get(imagePath);
+            Files.write(path, image.getBytes());
+            return "images/" + image.getOriginalFilename();
+        }
+        return null;
+    }
 
 }
