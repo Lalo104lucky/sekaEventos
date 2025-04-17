@@ -68,8 +68,6 @@ public class UsuarioService {
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<?> update(UsuarioDTO usuarioDTO) {
         Optional<Usuario> foundUser = repository.findById(usuarioDTO.getId_usuario());
-        System.out.println("Buscando usuario con ID: " + usuarioDTO.getId_usuario());
-        System.out.println("Buscando rol con ID: " + usuarioDTO.getId_rol());
         if (foundUser.isEmpty()){
             return customResponse.get400Response(400);
         }
