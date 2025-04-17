@@ -8,12 +8,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -26,10 +30,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class MainSecurity implements WebMvcConfigurer {
 
     @Autowired
-    private AuthFilter customFilter;
+    private CustomInterceptor customInterceptor;
 
     @Autowired
-    private CustomInterceptor customInterceptor;
+    private AuthFilter authFilter;
+
+    @Autowired
+    @Lazy
+    private UserDetailsImplService service;
 
     private final static String[] WHITE_LIST = {
             "/api/test",
@@ -54,7 +62,7 @@ public class MainSecurity implements WebMvcConfigurer {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(@Lazy UserDetailsImplService service) {
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider dao = new DaoAuthenticationProvider();
         dao.setUserDetailsService(service);
         dao.setPasswordEncoder(passwordEncoder());
@@ -74,7 +82,12 @@ public class MainSecurity implements WebMvcConfigurer {
                         .requestMatchers("/api/usuario/**").permitAll()
                         .requestMatchers("/api/images/**").permitAll()
                         .anyRequest().authenticated()
-                ).addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
+                ).httpBasic(Customizer.withDefaults())
+                .headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
+                .logout(out -> out.logoutUrl("/api/auth/logout").clearAuthentication(true));
         return http.build();
     }
 

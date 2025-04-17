@@ -77,9 +77,9 @@ public class AuthFilter extends OncePerRequestFilter {
         } catch (Exception e){
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Sin autorización");
+            return;
         }
         filterChain.doFilter(request, response);
         System.out.println("Cierre del filtro AuthFilter");
-
     }
 }

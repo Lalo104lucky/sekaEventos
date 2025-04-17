@@ -44,8 +44,9 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody UsuarioDTO usuarioDTO) {
+    public ResponseEntity<?> update(@PathVariable Long id ,@RequestBody UsuarioDTO usuarioDTO) {
         try {
+            usuarioDTO.setId_usuario(id);
             return service.update(usuarioDTO);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

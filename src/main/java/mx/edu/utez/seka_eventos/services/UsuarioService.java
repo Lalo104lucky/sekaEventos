@@ -68,6 +68,8 @@ public class UsuarioService {
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<?> update(UsuarioDTO usuarioDTO) {
         Optional<Usuario> foundUser = repository.findById(usuarioDTO.getId_usuario());
+        System.out.println("Buscando usuario con ID: " + usuarioDTO.getId_usuario());
+        System.out.println("Buscando rol con ID: " + usuarioDTO.getId_rol());
         if (foundUser.isEmpty()){
             return customResponse.get400Response(400);
         }
@@ -75,7 +77,6 @@ public class UsuarioService {
         usuario.setUsuario(usuarioDTO.getUsuario());
         usuario.setApellido_m(usuarioDTO.getApellido_m());
         usuario.setApellido_p(usuarioDTO.getApellido_p());
-        usuario.setContrasena(encoder.encode(usuarioDTO.getContrasena()));
         usuario.setCorreo(usuarioDTO.getCorreo());
         usuario.setNombre(usuarioDTO.getNombre());
         usuario.setTelefono(usuarioDTO.getTelefono());
