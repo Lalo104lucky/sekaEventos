@@ -1,76 +1,43 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import TableEventsAdmin from './components/TablaEventsAdmin';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import AxiosClient from '../../config/http-gateway/http-client';
+import * as yup from "yup";
+import { useFormik, yupToFormErrors } from "formik";
+import { alertaExito, alertaError, alertaCargando, alertaPregunta } from '../../config/context/alert';
 
 function EventsAdmin() {
     const [isModalCategoryOpen, setIsModalCategoryOpen] = useState(false);
-    const [newEvent, setNewEvent] = useState("");
     const [isModalCategoryEdit, setIsModalCategoryEdit] = useState(false);
     const [selectedStatus, setSelectedStatus] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState(null);
+    const [events, setEventos] = useState([]);
+    const [category, setCategory] = useState([]);
     let  sliderRef = useRef(null);
 
     const handleModalCategory = () => {
         setIsModalCategoryOpen(!isModalCategoryOpen);
     }
 
-    const handleModalCategoryEdit = () => {
+    const handleModalCategoryEdit = (event) => {
+        formikEditTipoEvento.setValues({
+            id: event.id_tipoevento,
+            nombre: event.nombre
+        })
         setIsModalCategoryEdit(!isModalCategoryEdit);
     }
 
     const next = () => {
         sliderRef.slickNext();
-      };
-      const previous = () => {
+    };
+      
+    const previous = () => {
         sliderRef.slickPrev();
-      };
-
-    const events = [
-        {
-            id: 1,
-            title: "Feria de Innovación Ambiental",
-            date: "22 de mayo, 08:00 AM",
-            location: "Parque Nacional, México",
-            category: "Reforestación",
-            status: "Próximamente"
-        },
-        {
-            id: 2,
-            title: "Conferencia sobre Cambio Climático",
-            date: "15 de junio, 10:00 AM",
-            location: "Centro de Convenciones, CDMX",
-            category: "Educación",
-            status: "Próximamente"
-        },
-        {
-            id: 3,
-            title: "Jornada de Limpieza de Playas",
-            date: "5 de abril, 09:00 AM",
-            location: "Playa del Carmen, México",
-            category: "Conservación",
-            status: "En Ejecución"
-        },
-        {
-            id: 4,
-            title: "Taller de Energías Renovables",
-            date: "10 de marzo, 10:00 AM",
-            location: "Centro de Convenciones, CDMX",
-            category: "Educación",
-            status: "Finalizado"
-        },
-        {
-            id: 5,
-            title: "Expo Tecnología Verde",
-            date: "30 de julio, 11:00 AM",
-            location: "Expo Center, Monterrey",
-            category: "Innovación",
-            status: "Próximamente"
-        }
-    ];
+    };
 
     const statusOptions = [
         { label: 'En Ejecución', value: 'En Ejecución' },
@@ -78,18 +45,99 @@ function EventsAdmin() {
         { label: 'Finalizado', value: 'Finalizado' }
     ];
 
-    const categoryOptions = [
-        { label: 'Reforestación', value: 'Reforestación' },
-        { label: 'Educación', value: 'Educación' },
-        { label: 'Conservación', value: 'Conservación' },
-        { label: 'Innovación', value: 'Innovación' },
-        { label: 'Reciclaje', value: 'Reciclaje' },
-        { label: 'Sustentabilidad', value: 'Sustentabilidad' },
-        { label: 'Energías Renovables', value: 'Energías Renovables' },
-        { label: 'Cambio Climático', value: 'Cambio Climático' },
-        { label: 'Desarrollo Sostenible', value: 'Desarrollo Sostenible' },
-        { label: 'Biodiversidad', value: 'Biodiversidad' }
-    ];
+    const formikTipoEvento = useFormik({
+        initialValues: {
+            nombre: ""
+        },
+        validationSchema: yup.object().shape({
+            nombre: yup.string().required("Campo Obligatorio")
+        }),
+        onSubmit: async (values) => {
+            try{
+                alertaCargando("Cargando", "Guardando los datos")
+                await AxiosClient.post("/tipoevento/", values)
+                alertaExito("Exito", "Se guardo correctamente tipo de evento")
+            }catch(error){
+                alertaError("Error", "Algo salio mal")
+            }finally{
+                handleModalCategory()
+                await getCategories()
+            }
+        }
+    })
+
+    const formikEditTipoEvento = useFormik({
+        initialValues: {
+            id:"", 
+            nombre: "",
+        },
+        validationSchema: yup.object().shape({
+            nombre: yup.string().required("Campo Obligatorio")
+        }),
+        onSubmit: async (values) => {
+            try{
+                alertaCargando("Cargando", "Guardando los datos")
+                await AxiosClient.put(`/tipoevento/${values.id}`, {
+                    id_tipoevento: values.id,
+                    nombre: values.nombre
+                })
+                alertaExito("Exito", "Se guardo correctamente el tipo de evento")    
+            }catch(error){
+                alertaError("Error", "Algo Salio mal")
+            }finally{
+                setIsModalCategoryEdit(false);
+                await getCategories();
+            }
+        }
+    })
+
+    const eliminarTipoEvento = (event) => {
+        alertaPregunta(
+            "Eliminar Tipo de Evento",
+            `¿Estás seguro de que deseas eliminar el tipo de evento "${event.nombre}"?`,
+            async () => {
+                try {
+                    alertaCargando("Cargando", "Eliminando el tipo de evento...");
+                    await AxiosClient.delete(`/tipoevento/${event.id_tipoevento}`);
+                    alertaExito("Éxito", "El tipo de evento se eliminó correctamente");
+                    await getCategories();
+                } catch (error) {
+                    console.error("Error al eliminar el tipo de evento:", error.response || error.message);
+                    alertaError("Error", "Algo salió mal al eliminar el tipo de evento");
+                }
+            },
+            () => {
+                alertaError("Cancelado", "La eliminación fue cancelada");
+            }
+        );
+    }
+
+    const getEvents = async () => {
+        try {
+            const response = await AxiosClient.get('/evento/');
+            setEventos(response.data);
+        } catch (error) {
+            console.error('Error fetching events:', error);
+        }
+    }
+
+    const getCategories = async () => {
+        try{
+            const response = await AxiosClient.get('/tipoevento/');
+            setCategory(response.data);
+        }catch(error){
+            alertaError("Error", "No se encuentran tipo de eventos")
+        }
+    }
+
+    useEffect(() => {
+        getEvents();
+    }, [])
+
+    useEffect(()=>{
+        getCategories();
+    }, [])
+
 
     const carouselSettings = {
         dots: true,
@@ -142,33 +190,15 @@ function EventsAdmin() {
         <Slider ref={slider => {
                 sliderRef = slider;
             }} {...carouselSettings}>
-            {categoryOptions.map((event, index) => (
+            {category.map((event, index) => (
                 <div key={index} className="p-2">
                     <div className='bg-white text-black p-4 rounded-lg shadow-md flex justify-between w-full'>
                         <span className="material-symbols-outlined">psychiatry</span>
-                        <p className='text-base font-semibold text-center truncate mx-2'>{event.label}</p>
+                        <p className='text-base font-semibold text-center truncate mx-2'>{event.nombre}</p>
                         <div className="flex items-center justify-center space-x-2">
-                            <button className="bg-red-700 px-3 py-1 rounded hover:bg-red-800 transition">
-                                <svg
-                                    className="w-5 h-5 text-white"
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        stroke="currentColor"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"
-                                    />
-                                </svg>
-                            </button>
-                            <button  className="bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500 transition"
-                                onClick={handleModalCategoryEdit}    
+                            <button 
+                                className="bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500 transition"
+                                onClick={()=>handleModalCategoryEdit(event)}
                             >
                                 <svg
                                     className="w-5 h-5 text-white"
@@ -185,6 +215,28 @@ function EventsAdmin() {
                                         strokeLinejoin="round"
                                         strokeWidth="2"
                                         d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"
+                                    />
+                                </svg>
+                            </button>
+                            <button 
+                                className="bg-red-700 px-3 py-1 rounded hover:bg-red-800 transition"
+                                onClick={()=> eliminarTipoEvento(event)}
+                            >
+                                <svg
+                                    className="w-5 h-5 text-white"
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke="currentColor"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"
                                     />
                                 </svg>
                             </button>
@@ -213,7 +265,7 @@ function EventsAdmin() {
         <TableEventsAdmin
             events={events}
             statusOptions={statusOptions}
-            categoryOptions={categoryOptions}
+            category={category}
             selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
             selectedStatus={selectedStatus}
@@ -224,17 +276,26 @@ function EventsAdmin() {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg w-96">
                         <h2 className="text-xl font-bold mb-4">Crear Nuevo Tipo de Evento</h2>
+                        <form noValidate onSubmit={formikTipoEvento.handleSubmit}> 
                         <input
-                        type="text"
-                        className="w-full p-2 border border-gray-300 rounded mb-4"
-                        placeholder="Nombre del evento"
-                        value={newEvent}
-                        onChange={(e) => setNewEvent(e.target.value)}
+                            type="text"
+                            id="nombre"
+                            name="nombre"
+                            className="w-full p-2 border border-gray-300 rounded mb-4"
+                            placeholder="Nombre del evento"
+                            value={formikTipoEvento.values.nombre}
+                            onChange={formikTipoEvento.handleChange}
+                            onBlur={formikTipoEvento.handleBlur}
+                            autoComplete='nombre'
+                            required
                         />
+                        {formikTipoEvento.touched.nombre && formikTipoEvento.errors.nombre && (
+                            <div className="text-red-600 text-sm">{formikTipoEvento.errors.usuario}</div>
+                        )}
                         <div className="flex justify-between">
                         <button
                             className="text-black px-4 py-2 rounded hover:bg-gray-400 transition"
-                            onClick={() => setNewEvent("")}
+                            onClick={()=> formikTipoEvento.resetForm()}
                         >
                             Limpiar
                         </button>
@@ -245,12 +306,14 @@ function EventsAdmin() {
                             Cancelar
                         </button>
                         <button
+                            type='submit'
                             className="bg-custom-green text-white text-center px-4 py-2 rounded hover:bg-green-600 transition"
-                            onClick={()=>console.log("Aqui se crea",)}
+                            disabled={!formikTipoEvento.isValid}
                         >
                             Guardar
                         </button>
                         </div>
+                        </form>
                     </div>
                 </div>
             )
@@ -260,17 +323,23 @@ function EventsAdmin() {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg w-96">
                         <h2 className="text-xl font-bold mb-4">Actualizar Nuevo Tipo de Evento</h2>
+                        <form noValidate onSubmit={formikEditTipoEvento.handleSubmit}>
                         <input
                         type="text"
+                        id="nombre"
+                        name="nombre"
                         className="w-full p-2 border border-gray-300 rounded mb-4"
                         placeholder="Nombre del evento"
-                        value={newEvent}
-                        onChange={(e) => setNewEvent(e.target.value)}
+                        value={formikEditTipoEvento.values.nombre}
+                        onChange={formikEditTipoEvento.handleChange}
+                        onBlur={formikEditTipoEvento.handleBlur}
+                        autoComplete="nombre"
+                        required
                         />
                         <div className="flex justify-between">
                         <button
                             className="text-black px-4 py-2 rounded hover:bg-gray-400 transition"
-                            onClick={() => setNewEvent("")}
+                            onClick={() => formikEditTipoEvento.resetForm()}
                         >
                             Limpiar
                         </button>
@@ -282,11 +351,13 @@ function EventsAdmin() {
                         </button>
                         <button
                             className="bg-custom-green text-white text-center px-4 py-2 rounded hover:bg-green-600 transition"
-                            onClick={()=>console.log("Aqui se actualiza")}
+                            type='submit'
+                            disabled={!formikEditTipoEvento.isValid}
                         >
                             Guardar
                         </button>
                         </div>
+                        </form>
                     </div>
                 </div>
             )

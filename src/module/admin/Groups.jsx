@@ -1,9 +1,11 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import TableGroups from './components/TableGroups'
+import AxiosClient from '../../config/http-gateway/http-client'
 
 const Groups = () => {
   const [isModalMemberOpen, setIsModalMemberOpen] = useState(false);
   const [isModalMemberEdit, setIsModalMemberEdit] = useState(false);
+  const [groups, setGroups] = useState([]);
   
   const handleModal = () => {
     setIsModalMemberOpen(!isModalMemberOpen);
@@ -17,13 +19,21 @@ const Groups = () => {
     setIsModalAdminOpen(!isModalAdminOpen);
   }
 
-  const members = [
-    { id: 1, nombre: 'Grupo Ambiental A', municipio: 'Ciudad de México', colonia: 'Centro', admin: 'Juan Pérez' },
-    { id: 2, nombre: 'Grupo Ambiental B', municipio: 'Guadalajara', colonia: 'Zapopan', admin: null },
-    { id: 3, nombre: 'Grupo Ambiental C', municipio: 'Monterrey', colonia: 'San Pedro', admin: 'María López' },
-    { id: 4, nombre: 'Grupo Ambiental D', municipio: 'Puebla', colonia: 'Cholula', admin: null },
-    { id: 5, nombre: 'Grupo Ambiental E', municipio: 'Querétaro', colonia: 'Centro', admin: 'Carlos García' },
-  ];
+  const getGroups = async () => {
+    try {
+      const response = await AxiosClient.get('/grupo/');
+      
+      setGroups(response.data);
+      console.log(response);
+    } catch (error) {
+      console.error('Error fetching groups:', error);
+    }
+  }
+
+  useEffect(() => {
+    getGroups();
+  }, []);
+
   return (
     <div className='p-8 font-poppins'>
       <div className='flex justify-between mt-6 mb-4 px-8 py-3'>
@@ -36,7 +46,7 @@ const Groups = () => {
         </button>
       </div>
       <TableGroups 
-        members={members}
+        members={groups}
         handleModalEdit={handleModalEdit}
         handleAdminModal={handleAdminModal}
       />

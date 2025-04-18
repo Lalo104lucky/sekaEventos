@@ -10,7 +10,7 @@ const TablaEventsAdmin = ({
   selectedCategory,
   setSelectedCategory,
   statusOptions,
-  categoryOptions,
+  category,
 }) => {
   
   const statusFilterTemplate = (options) => {
@@ -33,7 +33,7 @@ const TablaEventsAdmin = ({
     return (
       <Dropdown
         value={selectedCategory}
-        options={categoryOptions}
+        options={category}
         onChange={(e) => {
           setSelectedCategory(e.value);
           options.filterApplyCallback(e.value);
