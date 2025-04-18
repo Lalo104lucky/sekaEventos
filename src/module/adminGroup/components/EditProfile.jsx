@@ -1,7 +1,7 @@
 import React from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { AxiosClient }from "../../../config/http-gateway/http-client";
+import { AxiosClient } from "../../../config/http-gateway/http-client";
 import { alertaExito, alertaError, alertaCargando, alertaPregunta } from "../../../config/context/alert";
 
 function EditProfile({ user, onClose }) {

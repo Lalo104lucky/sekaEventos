@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import TableAdminGroups from './components/TableAdminGroups';
-import AxiosClient from '../../config/http-gateway/http-client';
+import { AxiosClient } from '../../config/http-gateway/http-client';
 
 
 const AdminGroups = () => {

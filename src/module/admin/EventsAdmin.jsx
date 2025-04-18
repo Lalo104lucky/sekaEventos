@@ -5,7 +5,7 @@ import TableEventsAdmin from './components/TablaEventsAdmin';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import AxiosClient from '../../config/http-gateway/http-client';
+import {AxiosClient} from '../../config/http-gateway/http-client';
 import * as yup from "yup";
 import { useFormik, yupToFormErrors } from "formik";
 import { alertaExito, alertaError, alertaCargando, alertaPregunta } from '../../config/context/alert';

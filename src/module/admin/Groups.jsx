@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import TableGroups from './components/TableGroups'
-import AxiosClient from '../../config/http-gateway/http-client'
+import {AxiosClient} from '../../config/http-gateway/http-client'
 
 const Groups = () => {
   const [isModalMemberOpen, setIsModalMemberOpen] = useState(false);
