@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
-//import AxiosClient from "../../config/http-gateway/http-client";
-//import { alertaExito, alertaError } from '../../config/alert/alert';
+import AxiosClient from "../../config/http-gateway/http-client";
+import { alertaExito, alertaError } from '../../config/context/alert';
 import FondoLogin from '../../assets/img/fondoLogin.jpg';
 import Logo from '../../assets/img/logo.png';
+import { useLocation } from 'react-router-dom';
+
 
 const ResetPasswordPage = () => {
     const navigate = useNavigate();
@@ -15,6 +17,10 @@ const ResetPasswordPage = () => {
     const togglePasswordVisibility1 = () => setShowPassword1(!showPassword1);
     const togglePasswordVisibility2 = () => setShowPassword2(!showPassword2);
 
+    const location = useLocation();
+    const { id, token } = location.state || {}; 
+    
+
     const formik = useFormik({
         initialValues: {
             token: '',
@@ -22,32 +28,35 @@ const ResetPasswordPage = () => {
             confirmPassword: '',
         },
         validationSchema: yup.object({
-            token: yup.string().required('Campo obligatorio'),
+            token: yup.string().required('Campo obligatorio').matches(/^\d{6}$/, 'El código debe ser un número de 6 dígitos'),
             newPassword: yup.string().required('Campo obligatorio').min(8, 'La contraseña debe tener al menos 8 caracteres'),
             confirmPassword: yup.string().oneOf([yup.ref('newPassword'), null], 'Las contraseñas deben coincidir').required('Campo obligatorio'),
         }),
         onSubmit: async (values, { setSubmitting }) => {
             try {
+                if (values.token !== token) {
+                    alertaError('Token incorrecto', 'El token ingresado no es válido');
+                    return;
+                }
+
                 const payload = {
-                    token: values.token,
-                    newPassword: values.newPassword,
-                    idUser: "1",
+                    contrasena: values.newPassword,
+                    
+
                 };
 
-/**                const response = await AxiosClient({
-                  url: '/users/reset-password',
-                    method: 'POST',
-                    data: payload,
+                const response = await AxiosClient.patch(`/usuario/reset-password/${id}`,{
+                    contrasena: values.newPassword,
                 });
- */
+
                 if (!response?.data?.error) {
-  //                  alertaExito('Contraseña restablecida', 'Tu contraseña ha sido restablecida con éxito');
-                    navigate('/');
+                    alertaExito('Contraseña restablecida', 'Tu contraseña ha sido restablecida con éxito');
+                    navigate('/',);
                 } else {
                     throw new Error(response.data.message);
                 }
             } catch (error) {
-    //            alertaError('Restablecer contraseña', 'Ocurrió un error al restablecer la contraseña');
+                alertaError('Restablecer contraseña', 'Ocurrió un error al restablecer la contraseña');
             } finally {
                 setSubmitting(false);
             }
@@ -76,7 +85,11 @@ const ResetPasswordPage = () => {
                                 type="text"
                                 id="token"
                                 name="token"
-                                onChange={formik.handleChange}
+                                onChange={(e) => {
+                                    // Acepta solo números y hasta 6 dígitos
+                                    const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                                    formik.setFieldValue('token', value);
+                                  }}
                                 onBlur={formik.handleBlur}
                                 value={formik.values.token}
                                 required
