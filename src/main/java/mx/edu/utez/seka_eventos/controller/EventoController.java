@@ -1,11 +1,17 @@
 package mx.edu.utez.seka_eventos.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import mx.edu.utez.seka_eventos.models.dto.EventoDTO;
 import mx.edu.utez.seka_eventos.services.EventoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @RestController
 @RequestMapping("/api/evento")
@@ -29,6 +35,21 @@ public class EventoController {
             return eventoService.findById(id);
         } catch (Exception e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/path/**")
+    public ResponseEntity<byte[]> getImagen(HttpServletRequest request) {
+        try {
+            String relativePath = request.getRequestURI().split("/path/")[1];
+            Path imagePath = Paths.get("src/main/resources", relativePath).normalize();
+            byte[] imageBytes = Files.readAllBytes(imagePath);
+            String contentType = Files.probeContentType(imagePath);
+            return ResponseEntity.ok()
+                    .header("Content-Type", contentType)
+                    .body(imageBytes);
+        } catch (IOException | ArrayIndexOutOfBoundsException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 

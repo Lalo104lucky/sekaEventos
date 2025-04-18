@@ -43,6 +43,7 @@ public class MainSecurity implements WebMvcConfigurer {
             "/api/auth/login",
             "/api/send-email",
             "/api/usuario/reset-password/**",
+            "/api/evento/path/**"
     };
 
 
