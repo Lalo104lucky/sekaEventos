@@ -63,7 +63,16 @@ public class UsuarioController {
     }
 
     @PatchMapping("/changeContra/{id}")
-    public ResponseEntity<?> changePassword(@PathVariable("id") Long id, @RequestBody UsuarioDTO usuarioDTO) {
+    public ResponseEntity<?> changePassword(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDTO) {
+        try {
+            return service.changeContrasena(id, usuarioDTO);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PatchMapping("/reset-password/{id}")
+    public ResponseEntity<?> resetPassword(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDTO) {
         try {
             return service.changeContrasena(id, usuarioDTO);
         } catch (Exception e) {

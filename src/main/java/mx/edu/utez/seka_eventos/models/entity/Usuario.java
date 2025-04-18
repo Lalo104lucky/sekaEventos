@@ -52,8 +52,11 @@ public class Usuario {
     @JsonIgnore
     private Grupo grupo_usuario;
 
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.PERSIST)
+    @JsonIgnore
+    private List<Evento> eventos_usuario;
 
-    public Usuario(Long id_usuario, String usuario, String correo, String contrasena, String nombre, String apellido_p, String apellido_m, String telefono, Rol rol, List<Evento> eventos, Grupo grupo, Grupo grupo_usuario) {
+    public Usuario(Long id_usuario, String usuario, String correo, String contrasena, String nombre, String apellido_p, String apellido_m, String telefono, Rol rol, List<Evento> eventos, Grupo grupo, Grupo grupo_usuario, List<Evento> eventos_usuario) {
         this.id_usuario = id_usuario;
         this.usuario = usuario;
         this.correo = correo;
@@ -66,6 +69,7 @@ public class Usuario {
         this.eventos = eventos;
         this.grupo = grupo;
         this.grupo_usuario = grupo_usuario;
+        this.eventos_usuario = eventos_usuario;
     }
 
     public Usuario() {
@@ -166,5 +170,13 @@ public class Usuario {
 
     public void setGrupo_usuario(Grupo grupo_usuario) {
         this.grupo_usuario = grupo_usuario;
+    }
+
+    public List<Evento> getEventos_usuario() {
+        return eventos_usuario;
+    }
+
+    public void setEventos_usuario(List<Evento> eventos_usuario) {
+        this.eventos_usuario = eventos_usuario;
     }
 }

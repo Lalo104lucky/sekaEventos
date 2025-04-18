@@ -8,7 +8,7 @@ import java.util.List;
 
 public class EventoDTO {
 
-    private Long id_evento, id_tipoEvento;
+    private Long id_evento, id_tipoEvento, id_usuario;
     private String titulo, estatus, imagen;
     private LocalDateTime fecha;
     private List<UsuarioDTO> usuarios;
@@ -17,7 +17,7 @@ public class EventoDTO {
 
     }
 
-    public EventoDTO(Long id_evento, String titulo, String estatus, LocalDateTime fecha, List<UsuarioDTO> usuarios, Long id_tipoEvento, String imagen) {
+    public EventoDTO(Long id_evento, String titulo, String estatus, LocalDateTime fecha, List<UsuarioDTO> usuarios, Long id_tipoEvento, String imagen, Long id_usuario) {
         this.id_evento = id_evento;
         this.titulo = titulo;
         this.estatus = estatus;
@@ -25,6 +25,7 @@ public class EventoDTO {
         this.usuarios = usuarios;
         this.id_tipoEvento = id_tipoEvento;
         this.imagen = imagen;
+        this.id_usuario = id_usuario;
     }
 
     public Long getId_evento() {
@@ -81,5 +82,13 @@ public class EventoDTO {
 
     public void setImagen(String imagen) {
         this.imagen = imagen;
+    }
+
+    public Long getId_usuario() {
+        return id_usuario;
+    }
+
+    public void setId_usuario(Long id_usuario) {
+        this.id_usuario = id_usuario;
     }
 }

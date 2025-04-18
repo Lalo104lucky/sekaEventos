@@ -27,11 +27,15 @@ public class UserDetailsImplService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String usuario) throws UsernameNotFoundException {
-        Optional<Usuario> foundUsuario = service.findUsuario(usuario);
-        if (foundUsuario.isEmpty()) {
-            throw new UsernameNotFoundException("Usuario no encontrado");
-        } else {
-            return UserDetailsImpl.build(foundUsuario.get());
+        try {
+            Optional<Usuario> foundUsuario = service.findUsuario(usuario);
+            if (foundUsuario.isEmpty()) {
+                throw new UsernameNotFoundException("Usuario no encontrado");
+            } else {
+                return UserDetailsImpl.build(foundUsuario.get());
+            }
+        } catch (Exception e) {
+            throw new UsernameNotFoundException("Error al cargar el usuario");
         }
     }
 }

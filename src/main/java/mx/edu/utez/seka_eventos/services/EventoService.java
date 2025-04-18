@@ -61,14 +61,20 @@ public class EventoService {
             if(foundTipoEvento.isEmpty()){
                 return customResponse.get400Response(404);
             }
+            Optional<Usuario> foundUsuario = usuarioRepository.findById(eventoDTO.getId_usuario());
+            if (foundUsuario.isEmpty()) {
+                return customResponse.get400Response(404);
+            }
             String imagePath = saveImage(imagen);
             TIpoEvento tIpoEvento = foundTipoEvento.get();
             Evento evento = new Evento();
+            Usuario user = foundUsuario.get();
             evento.setTitulo(eventoDTO.getTitulo());
             evento.setFecha(eventoDTO.getFecha());
             evento.setEstatus(eventoDTO.getEstatus());
             evento.setTipoEvento(tIpoEvento);
             evento.setImagen(imagePath);
+            evento.setUsuario(user);
             return customResponse.getCreatedResponse(repository.save(evento));
         } catch (IOException e){
             return customResponse.get400Response(500);
@@ -83,8 +89,14 @@ public class EventoService {
             if(foundEvento.isEmpty()){
                 return customResponse.get400Response(404);
             }
+            Optional<Usuario> foundUsuario = usuarioRepository.findById(eventoDTO.getId_usuario());
+            if (foundUsuario.isEmpty()) {
+                return customResponse.get400Response(404);
+            }
             String imagePath = saveImage(imagen);
             Evento evento = foundEvento.get();
+            Usuario user = foundUsuario.get();
+            evento.setUsuario(user);
             evento.setTitulo(eventoDTO.getTitulo());
             evento.setFecha(eventoDTO.getFecha());
             evento.setEstatus(eventoDTO.getEstatus());

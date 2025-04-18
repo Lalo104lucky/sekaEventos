@@ -38,8 +38,12 @@ public class Evento {
     @JoinColumn(name = "id_tipoEvento")
     private TIpoEvento tipoEvento;
 
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "id_usuario")
+    private Usuario usuario;
 
-    public Evento(Long id_evento, String titulo, LocalDateTime fecha, String estatus, List<Usuario> usuarios, TIpoEvento tipoEvento, String imagen) {
+
+    public Evento(Long id_evento, String titulo, LocalDateTime fecha, String estatus, List<Usuario> usuarios, TIpoEvento tipoEvento, String imagen, Usuario usuario) {
         this.id_evento = id_evento;
         this.titulo = titulo;
         this.fecha = fecha;
@@ -47,6 +51,7 @@ public class Evento {
         this.usuarios = usuarios;
         this.tipoEvento = tipoEvento;
         this.imagen = imagen;
+        this.usuario = usuario;
     }
 
     public Evento() {
@@ -107,5 +112,13 @@ public class Evento {
 
     public void setImagen(String imagen) {
         this.imagen = imagen;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 }
