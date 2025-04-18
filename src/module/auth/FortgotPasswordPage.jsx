@@ -5,6 +5,7 @@ import * as yup from 'yup';
 import { AxiosClient } from '../../config/http-gateway/http-client';
 import FondoLogin from '../../assets/img/fondoLogin.jpg';
 import Logo from '../../assets/img/logo.png';
+import { alertaExito, alertaError } from '../../config/context/alert';
 
 const ForgotPasswordPage = () => {
   const navigate = useNavigate();
@@ -12,10 +13,10 @@ const ForgotPasswordPage = () => {
 
   const formik = useFormik({
     initialValues: {
-      email: "",
+      destinatario: "",
     },
     validationSchema: yup.object().shape({
-      email: yup
+      destinatario: yup
         .string()
         .required("Campo obligatorio")
         .email("Email inválido"),
@@ -23,20 +24,20 @@ const ForgotPasswordPage = () => {
     onSubmit: async (values, { setSubmitting }) => {
       setLoading(true);
       try {
-    /*    const response = await AxiosClient({
-          url: "/users/request-password-reset",
-          method: "POST",
-          data: values,
+        const response = await AxiosClient.post('/send-email', {
+          destinatario: values.destinatario,
+          asunto: "Recuperar contraseña",
         });
-      */  
+        
         if (!response?.data?.error) {
-//          alertaExito("Correo enviado", "Revisa tu bandeja de entrada para continuar con el restablecimiento de contraseña.");
-          navigate("/reset-password");
+          alertaExito("Correo enviado", "Revisa tu bandeja de entrada para continuar con el restablecimiento de contraseña.");
+          navigate('/reset-password/', { state: { id: response.data.id_usuario, token: response.data.email.pin } });
+          
         } else {
           throw new Error(response.data.message);
         }
       } catch (error) {
-  //      alertaError("Restablecer contraseña", "Ocurrió un error al enviar el correo electrónico");
+      alertaError("Restablecer contraseña", "Ocurrió un error al enviar el correo electrónico");
       } finally {
         setLoading(false);
         setSubmitting(false);
@@ -70,18 +71,18 @@ const ForgotPasswordPage = () => {
               </div>
               <input
                 type="email"
-                id="email"
-                name="email"
+                id="destinatario"
+                name="destinatario"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.email}
+                value={formik.values.destinatario}
                 autoComplete="email"
                 required
                 className="w-full border border-gray-300 p-2 pl-10 rounded-lg"
                 placeholder="name@example.com"
               />
-              {formik.touched.email && formik.errors.email && (
-                <div className="text-red-600 text-sm">{formik.errors.email}</div>
+              {formik.touched.destinatario && formik.errors.destinatario && (
+                <div className="text-red-600 text-sm">{formik.errors.destinatario}</div>
               )}
             </div>
 
