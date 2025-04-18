@@ -42,8 +42,9 @@ public class TipoEventoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody TipoEventoDTO tipoEventoDTO) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody TipoEventoDTO tipoEventoDTO) {
         try {
+            tipoEventoDTO.setId_tipoevento(id);
             return tipoEventoService.update(tipoEventoDTO);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

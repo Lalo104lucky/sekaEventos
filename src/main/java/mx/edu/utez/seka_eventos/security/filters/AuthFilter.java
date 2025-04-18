@@ -17,6 +17,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -39,9 +40,13 @@ public class AuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try{
             final String AUTH_HEADER = request.getHeader("Authorization");
+            String requestUri = request.getRequestURI();
             Set<String> whiteList = Arrays.stream(MainSecurity.getWHITE_LIST()).collect(Collectors.toSet());
 
-            if (!whiteList.contains(request.getRequestURI())) {
+            AntPathMatcher matcher = new AntPathMatcher();
+            boolean isWhitelisted = whiteList.stream().anyMatch(path -> matcher.match(path, requestUri));
+
+            if (!isWhitelisted) {
                 System.out.println("Método de la solicitud: " + request.getMethod());
                 System.out.println("Ruta a la que se quiere acceder: " + request.getRequestURI());
                 System.out.println("Verificando los encabezados de la solicitud...");
