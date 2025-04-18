@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import * as yup from "yup";
 import { useFormik } from "formik";
 import AuthContext from "../../config/context/auth-context";
-import AxiosClient from '../../config/http-gateway/http-client';
+import { AxiosClient } from '../../config/http-gateway/http-client';
 import { alertaExito, alertaError } from '../../config/context/alert';
 
 import Logo from '../../assets/img/logo.png';
@@ -84,7 +84,7 @@ const SignInPage = () => {
                                 value={formik.values.usuario}
                                 autoComplete="usuario"
                                 required
-                                className="w-full border border-gray-300 p-2 mb-3"
+                                className="w-full border border-gray-300 p-2 mb-3 custom-input"
                                 placeholder="Usuario"
                             />
                             {formik.touched.usuario && formik.errors.usuario && (
@@ -101,7 +101,7 @@ const SignInPage = () => {
                                 onBlur={formik.handleBlur}
                                 value={formik.values.contrasena}
                                 required
-                                className="w-full border border-gray-300 p-2 pr-12 mb-3"
+                                className="w-full border border-gray-300 p-2 pr-12 items-center custom-input"
                                 placeholder="Contraseña"
                             />
                             <button

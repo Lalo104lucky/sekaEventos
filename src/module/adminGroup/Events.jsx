@@ -2,10 +2,12 @@ import React, { useState } from 'react'
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import TablaEvents from './components/TablaEvents';
+import CrearEventoModal from './components/CrearEventoModal';
 
 function Events() {
     const [selectedStatus, setSelectedStatus] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState(null);
+    const [showCreateEventModal, setShowCreateEventModal] = useState(false);
 
 
     const events = [
@@ -114,7 +116,9 @@ function Events() {
 
             <div className="flex justify-between mt-6 mb-4 px-8 py-3">
                 <h2 className="font-poppins text-3xl font-semibold">Eventos</h2>
-                <button className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition">
+                <button
+                    onClick={() => setShowCreateEventModal(true)}
+                    className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition">
                     <i className="pi pi-plus mr-2"></i> Nuevo Evento
                 </button>
             </div>
@@ -129,6 +133,13 @@ function Events() {
                 categoryOptions={categoryOptions}
             />
 
+            {showCreateEventModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
+                        <CrearEventoModal onClose={() => setShowCreateEventModal(false)} />
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

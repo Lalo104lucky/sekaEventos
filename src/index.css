@@ -144,6 +144,10 @@ más fácil de saber que estoy metiendo */
   color: white; 
 }
 
+.bg-custom-green1 {
+  background-color: #416327;
+}
+
 .bg-custom-yellow {
   background-color: #F4D03F;
   color: black; 
@@ -190,6 +194,22 @@ más fácil de saber que estoy metiendo */
   border-top: 10px solid #3F54D1; 
 }
 
+.loader {
+  border: 5px solid #3F54D1;
+  border-left-color: #ffffff;
+  border-radius: 50%;
+  width: 82px;
+  height: 82px;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% {
+      transform: rotate(0deg);
+  }
+  100% {
+      transform: rotate(360deg);
+  }
+}
 .custom-alert-pregunta {
   border-radius: 10px;
   padding: 20px; 
@@ -201,6 +221,21 @@ más fácil de saber que estoy metiendo */
 .text-stroke {
   -webkit-text-stroke: 1px #0000003b;
   color: white; 
+}
+
+.custom-input {
+  width: 100%;
+}
+
+.custom-input:focus {
+  outline: none;
+  border-radius: 0.225rem; 
+  border: 2px solid black; 
+  box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.2); 
+}
+
+.bg-custom-blue {
+  background-color: #3F54D1;
 }
 
 /* Aún no he acabado pinshi mats pero subelo a tu rama y de aquí veo que tanto agregaste

@@ -9,7 +9,6 @@ import ResetPasswordPage from '../module/auth/ResetPasswordPage';
 import AuthContext from '../config/context/auth-context';
 import Events from '../module/adminGroup/Events';
 import Members from '../module/adminGroup/Members';
-import Profile from '../module/adminGroup/Profile';
 import Page401 from '../module/auth/Page401';
 import ProtectedRoute from './ProtectedRouter';
 import EventList from '../module/member/components/EventList';
@@ -57,7 +56,6 @@ const AppRouter = () => {
                             }>
                                 <Route index element={<Events />} />
                                 <Route path='/miembros' element={<Members />} />
-                                <Route path='/perfil' element={<Profile />} />
                             </Route>
                         ) : (
                             <Route path="/" element={

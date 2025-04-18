@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
-import AxiosClient from '../../config/http-gateway/http-client';
+import { AxiosClient } from '../../config/http-gateway/http-client';
 import FondoLogin from '../../assets/img/fondoLogin.jpg';
 import Logo from '../../assets/img/logo.png';
 

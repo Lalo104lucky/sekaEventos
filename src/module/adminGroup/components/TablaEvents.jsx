@@ -110,7 +110,7 @@ const TablaEvents = ({
   };
 
   return (
-    <DataTable value={events} className="p-datatable px-8 custom-datatable" paginator rows={7} tableStyle={{ minWidth: '50rem' }}>
+    <DataTable value={events} className="p-datatable px-8 custom-datatable" paginator rows={10} tableStyle={{ minWidth: '50rem' }}>
       <Column field="id" header="#" style={{ width: '20px' }}></Column>
       <Column field="title" header="Título"></Column>
       <Column field="date" header="Fecha y Hora"></Column>
