@@ -31,9 +31,6 @@ AxiosFormClient.interceptors.request.use((request) => {
     if (session?.token) {
         request.headers["Authorization"] = `Bearer ${session.token}`;
     }
-
-    console.log("Request headers ENVIADOS AxiosFormClient:", request.headers); 
-
     return request;
 });
 

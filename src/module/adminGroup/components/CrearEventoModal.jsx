@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { AxiosFormClient } from "../../../config/http-gateway/http-client";
+import { AxiosClient, AxiosFormClient } from "../../../config/http-gateway/http-client";
 import { alertaExito, alertaError, alertaCargando, alertaPregunta } from "../../../config/context/alert";
 
 function CrearEventoModal({ onClose }) {
@@ -8,7 +8,7 @@ function CrearEventoModal({ onClose }) {
         fecha: "",
         estatus: "ACTIVO",
         id_usuario: 2,
-        id_tipoevento: 1,
+        id_tipoevento: 1
     });
     const [imagen, setImagen] = useState(null);
 
@@ -31,13 +31,21 @@ function CrearEventoModal({ onClose }) {
         alertaPregunta("¿Estás seguro?", "¿Deseas crear el evento?", async () => {
             try {
                 alertaCargando("Creando evento...", "Espere un momento");
-                const body = new FormData();
-                body.append("eventoDTO", new Blob([JSON.stringify(formData)], { type: "application/json" }));
-                body.append("imagen", imagen);
-                const response = await AxiosFormClient.post("/evento/", body);
+
+                const responseEvento = await AxiosClient.post("/evento/", formData);
+                const eventoCreado = responseEvento.message;
+
+                if (!eventoCreado?.id_evento) {
+                    throw new Error("No se obtuvo el ID del evento");
+                }
+
+                // Paso 2: Subir imagen usando FormData
+                const formImage = new FormData();
+                formImage.append("imagen", imagen);
+
+                await AxiosFormClient.post(`/evento/${eventoCreado.id_evento}/upload-image`, formImage);
 
                 alertaExito("Éxito", "Evento creado correctamente");
-                console.log("Respuesta:", response.data);
                 onClose();
             } catch (error) {
                 console.error("Error al crear el evento:", error);
