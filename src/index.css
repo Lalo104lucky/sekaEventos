@@ -203,5 +203,26 @@ más fácil de saber que estoy metiendo */
   color: white; 
 }
 
+.bg-custom-blue {
+  background-color: #3F54D1;
+}
+
+.loader {
+  border: 5px solid #3F54D1;
+  border-left-color: #ffffff;
+  border-radius: 50%;
+  width: 82px;
+  height: 82px;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% {
+      transform: rotate(0deg);
+  }
+  100% {
+      transform: rotate(360deg);
+  }
+}
+
 /* Aún no he acabado pinshi mats pero subelo a tu rama y de aquí veo que tanto agregaste
 Nota: No me quites mis comentarios para saber que estaré metiendo después */
