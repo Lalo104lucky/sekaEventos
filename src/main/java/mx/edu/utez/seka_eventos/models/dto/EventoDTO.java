@@ -8,7 +8,7 @@ import java.util.List;
 
 public class EventoDTO {
 
-    private Long id_evento, id_tipoEvento, id_usuario;
+    private Long id_evento, id_tipoevento, id_usuario;
     private String titulo, estatus, imagen;
     private LocalDateTime fecha;
     private List<UsuarioDTO> usuarios;
@@ -17,15 +17,15 @@ public class EventoDTO {
 
     }
 
-    public EventoDTO(Long id_evento, String titulo, String estatus, LocalDateTime fecha, List<UsuarioDTO> usuarios, Long id_tipoEvento, String imagen, Long id_usuario) {
+    public EventoDTO(Long id_evento, Long id_tipoevento, Long id_usuario, String titulo, String estatus, String imagen, LocalDateTime fecha, List<UsuarioDTO> usuarios) {
         this.id_evento = id_evento;
+        this.id_tipoevento = id_tipoevento;
+        this.id_usuario = id_usuario;
         this.titulo = titulo;
         this.estatus = estatus;
+        this.imagen = imagen;
         this.fecha = fecha;
         this.usuarios = usuarios;
-        this.id_tipoEvento = id_tipoEvento;
-        this.imagen = imagen;
-        this.id_usuario = id_usuario;
     }
 
     public Long getId_evento() {
@@ -34,6 +34,22 @@ public class EventoDTO {
 
     public void setId_evento(Long id_evento) {
         this.id_evento = id_evento;
+    }
+
+    public Long getId_tipoevento() {
+        return id_tipoevento;
+    }
+
+    public void setId_tipoevento(Long id_tipoevento) {
+        this.id_tipoevento = id_tipoevento;
+    }
+
+    public Long getId_usuario() {
+        return id_usuario;
+    }
+
+    public void setId_usuario(Long id_usuario) {
+        this.id_usuario = id_usuario;
     }
 
     public String getTitulo() {
@@ -52,6 +68,14 @@ public class EventoDTO {
         this.estatus = estatus;
     }
 
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
+    }
+
     public LocalDateTime getFecha() {
         return fecha;
     }
@@ -66,29 +90,5 @@ public class EventoDTO {
 
     public void setUsuarios(List<UsuarioDTO> usuarios) {
         this.usuarios = usuarios;
-    }
-
-    public Long getId_tipoEvento() {
-        return id_tipoEvento;
-    }
-
-    public void setId_tipoEvento(Long id_tipoEvento) {
-        this.id_tipoEvento = id_tipoEvento;
-    }
-
-    public String getImagen() {
-        return imagen;
-    }
-
-    public void setImagen(String imagen) {
-        this.imagen = imagen;
-    }
-
-    public Long getId_usuario() {
-        return id_usuario;
-    }
-
-    public void setId_usuario(Long id_usuario) {
-        this.id_usuario = id_usuario;
     }
 }

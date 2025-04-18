@@ -55,63 +55,63 @@ public class EventoService {
     }
 
     @Transactional(rollbackFor = {SQLException.class})
-    public ResponseEntity<?> register(EventoDTO eventoDTO, MultipartFile imagen){
-        try {
-            Optional<TIpoEvento> foundTipoEvento = tipoEventoRepository.findById(eventoDTO.getId_tipoEvento());
-            if(foundTipoEvento.isEmpty()){
-                return customResponse.get400Response(404);
-            }
-            Optional<Usuario> foundUsuario = usuarioRepository.findById(eventoDTO.getId_usuario());
-            if (foundUsuario.isEmpty()) {
-                return customResponse.get400Response(404);
-            }
-            String imagePath = saveImage(imagen);
-            TIpoEvento tIpoEvento = foundTipoEvento.get();
-            Evento evento = new Evento();
-            Usuario user = foundUsuario.get();
-            evento.setTitulo(eventoDTO.getTitulo());
-            evento.setFecha(eventoDTO.getFecha());
-            evento.setEstatus(eventoDTO.getEstatus());
-            evento.setTipoEvento(tIpoEvento);
-            evento.setImagen(imagePath);
-            evento.setUsuario(user);
-            return customResponse.getCreatedResponse(repository.save(evento));
-        } catch (IOException e){
-            return customResponse.get400Response(500);
+    public ResponseEntity<?> register(EventoDTO eventoDTO) {
+        Optional<TIpoEvento> foundTipoEvento = tipoEventoRepository.findById(eventoDTO.getId_tipoevento());
+        Optional<Usuario> foundUsuario = usuarioRepository.findById(eventoDTO.getId_usuario());
+        if (foundTipoEvento.isEmpty() || foundUsuario.isEmpty()) {
+            return customResponse.get400Response(404);
         }
+        Evento evento = new Evento();
+        TIpoEvento tipoEvento = foundTipoEvento.get();
+        Usuario usuario = foundUsuario.get();
+        evento.setTitulo(eventoDTO.getTitulo());
+        evento.setFecha(eventoDTO.getFecha());
+        evento.setEstatus(eventoDTO.getEstatus());
+        evento.setTipoEvento(tipoEvento);
+        evento.setUsuario(usuario);
+        evento.setImagen(null);
+        return customResponse.getCreatedResponse(repository.save(evento));
+    }
 
+
+    @Transactional(rollbackFor = {SQLException.class})
+    public ResponseEntity<?> update(EventoDTO eventoDTO){
+        Optional<Evento> foundEvento = repository.findById(eventoDTO.getId_evento());
+        Optional<TIpoEvento> foundTipoEvento = tipoEventoRepository.findById(eventoDTO.getId_tipoevento());
+        Optional<Usuario> foundUsuario = usuarioRepository.findById(eventoDTO.getId_usuario());
+        if(foundEvento.isEmpty()){
+            return customResponse.get400Response(404);
+        }
+        if(foundTipoEvento.isEmpty()){
+            return customResponse.get400Response(404);
+        }
+        Evento evento = foundEvento.get();
+        Usuario user = foundUsuario.get();
+        evento.setUsuario(user);
+        evento.setTitulo(eventoDTO.getTitulo());
+        evento.setFecha(eventoDTO.getFecha());
+        evento.setEstatus(eventoDTO.getEstatus());
+        evento.setImagen(null);
+        evento.setTipoEvento(foundTipoEvento.get());
+        return customResponse.getOkResponse(repository.save(evento));
     }
 
     @Transactional(rollbackFor = {SQLException.class})
-    public ResponseEntity<?> update(EventoDTO eventoDTO, MultipartFile imagen){
-        try{
-            Optional<Evento> foundEvento = repository.findById(eventoDTO.getId_evento());
-            if(foundEvento.isEmpty()){
+    public ResponseEntity<?> uploadImage(Long eventoId, MultipartFile imagen) {
+        try {
+            Optional<Evento> foundEvento = repository.findById(eventoId);
+            if (foundEvento.isEmpty()) {
                 return customResponse.get400Response(404);
             }
-            Optional<Usuario> foundUsuario = usuarioRepository.findById(eventoDTO.getId_usuario());
-            if (foundUsuario.isEmpty()) {
-                return customResponse.get400Response(404);
-            }
-            String imagePath = saveImage(imagen);
             Evento evento = foundEvento.get();
-            Usuario user = foundUsuario.get();
-            evento.setUsuario(user);
-            evento.setTitulo(eventoDTO.getTitulo());
-            evento.setFecha(eventoDTO.getFecha());
-            evento.setEstatus(eventoDTO.getEstatus());
+            String imagePath = saveImage(imagen);
             evento.setImagen(imagePath);
-            Optional<TIpoEvento> foundTipoEvento = tipoEventoRepository.findById(eventoDTO.getId_tipoEvento());
-            if(foundTipoEvento.isEmpty()){
-                return customResponse.get400Response(404);
-            }
-            evento.setTipoEvento(foundTipoEvento.get());
             return customResponse.getOkResponse(repository.save(evento));
         } catch (IOException e) {
             return customResponse.get400Response(500);
         }
-
     }
+
 
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<?> delete(Long id){

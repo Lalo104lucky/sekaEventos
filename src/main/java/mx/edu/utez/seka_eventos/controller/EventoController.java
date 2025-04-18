@@ -33,18 +33,28 @@ public class EventoController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> create(@RequestPart("eventoDTO") EventoDTO eventoDTO, @RequestPart("imagen") MultipartFile imagen) {
+    public ResponseEntity<?> create(@RequestBody EventoDTO eventoDTO) {
         try {
-            return eventoService.register(eventoDTO, imagen);
+            return eventoService.register(eventoDTO);
         } catch (Exception e){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
+    @PostMapping("/{id}/upload-image")
+    public ResponseEntity<?> uploadImage(@PathVariable Long id, @RequestParam("imagen") MultipartFile imagen) {
+        try{
+            return eventoService.uploadImage(id, imagen);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@RequestPart("eventoDTO") EventoDTO eventoDTO, @RequestPart("imagen") MultipartFile imagen) {
+    public ResponseEntity<?> update(@RequestBody EventoDTO eventoDTO) {
         try {
-            return eventoService.update(eventoDTO, imagen);
+            return eventoService.update(eventoDTO);
         } catch (Exception e){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

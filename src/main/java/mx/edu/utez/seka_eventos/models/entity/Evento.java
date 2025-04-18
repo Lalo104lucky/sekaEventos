@@ -32,10 +32,11 @@ public class Evento {
             joinColumns = @JoinColumn(name = "id_usuario"),
             inverseJoinColumns = @JoinColumn(name = "id_evento")
     )
+    @JsonIgnore
     private List<Usuario> usuarios;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "id_tipoEvento")
+    @JoinColumn(name = "id_tipoevento")
     private TIpoEvento tipoEvento;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
@@ -90,6 +91,14 @@ public class Evento {
         this.estatus = estatus;
     }
 
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
+    }
+
     public List<Usuario> getUsuarios() {
         return usuarios;
     }
@@ -104,14 +113,6 @@ public class Evento {
 
     public void setTipoEvento(TIpoEvento tipoEvento) {
         this.tipoEvento = tipoEvento;
-    }
-
-    public String getImagen() {
-        return imagen;
-    }
-
-    public void setImagen(String imagen) {
-        this.imagen = imagen;
     }
 
     public Usuario getUsuario() {
