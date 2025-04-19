@@ -60,7 +60,7 @@ public class GrupoService {
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<?> update(GrupoDTO grupoDTO) {
         Optional<Grupo> foundGrupo = repository.findById(grupoDTO.getId_grupo());
-        Optional<Usuario> foundUser = usuarioRepository.findById(grupoDTO.getId_grupo());
+        Optional<Usuario> foundUser = usuarioRepository.findById(grupoDTO.getId_usuario());
         if (foundGrupo.isEmpty()){
             return customResponse.get400Response(400);
         }
