@@ -80,6 +80,21 @@ public class GrupoService {
         return customResponse.getOkResponse("Grupo eliminado");
     }
 
-
+    @Transactional(rollbackFor = {SQLException.class})
+    public ResponseEntity<?> addUsertoGroup(Long id_grupo, Long id_usuario) {
+        Optional<Grupo> foundGrupo = repository.findById(id_grupo);
+        Optional<Usuario> foundUsuario = usuarioRepository.findById(id_usuario);
+        if (foundGrupo.isEmpty()) {
+            return customResponse.get400Response(404);
+        }
+        if (foundUsuario.isEmpty()) {
+            return customResponse.get400Response(404);
+        }
+        Grupo grupo = foundGrupo.get();
+        Usuario usuario = foundUsuario.get();
+        usuario.setGrupo(grupo);
+        usuarioRepository.save(usuario);
+        return customResponse.getOkResponse("Usuario agregado al grupo");
+    }
 
 }

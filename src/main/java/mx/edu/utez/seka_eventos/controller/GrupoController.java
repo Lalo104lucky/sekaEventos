@@ -58,4 +58,13 @@ public class GrupoController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @PostMapping("/{id_grupo}/add-usuario/{id_usuario}")
+    public ResponseEntity<?> addUsuarioToGrupo(@PathVariable Long id_grupo, @PathVariable Long id_usuario) {
+        try {
+            return grupoService.addUsertoGroup(id_grupo, id_usuario);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }

@@ -45,7 +45,6 @@ public class Usuario {
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "id_grupo")
-    @JsonIgnore
     private Grupo grupo;
 
     @OneToOne(cascade = CascadeType.PERSIST, mappedBy = "usuario")

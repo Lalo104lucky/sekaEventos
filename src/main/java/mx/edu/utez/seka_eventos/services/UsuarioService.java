@@ -4,6 +4,7 @@ import mx.edu.utez.seka_eventos.kernel.CustomResponse;
 import mx.edu.utez.seka_eventos.models.dao.RolRepository;
 import mx.edu.utez.seka_eventos.models.dao.UsuarioRepository;
 import mx.edu.utez.seka_eventos.models.dto.UsuarioDTO;
+import mx.edu.utez.seka_eventos.models.entity.Grupo;
 import mx.edu.utez.seka_eventos.models.entity.Rol;
 import mx.edu.utez.seka_eventos.models.entity.Usuario;
 import org.springframework.context.annotation.Lazy;
@@ -107,6 +108,7 @@ public class UsuarioService {
         usuario.setContrasena(encoder.encode(usuarioDTO.getContrasena()));
         return customResponse.getOkResponse(repository.save(usuario));
     }
+
 
     @Transactional
     public Optional<Usuario> findUsuario(String usuario) {

@@ -91,7 +91,7 @@ public class EventoService {
         evento.setTitulo(eventoDTO.getTitulo());
         evento.setFecha(eventoDTO.getFecha());
         evento.setEstatus(eventoDTO.getEstatus());
-        evento.setImagen(null);
+        evento.setImagen(eventoDTO.getImagen());
         evento.setTipoEvento(foundTipoEvento.get());
         return customResponse.getOkResponse(repository.save(evento));
     }
