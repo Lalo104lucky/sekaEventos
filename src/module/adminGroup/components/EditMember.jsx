@@ -1,75 +1,85 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { AxiosClient } from "../../../config/http-gateway/http-client";
 import { alertaExito, alertaError, alertaCargando, alertaPregunta } from "../../../config/context/alert";
 
-function AddMembers({ grupoId, onClose, onMemberAdded }) {
-    const [showPassword, setShowPassword] = useState(false);
+function EditMember({ memberId, onClose, onMemberUpdated }) {
+    const [memberData, setMemberData] = useState(null);
 
-    const toggleShowPassword = () => setShowPassword(!showPassword);
+    useEffect(() => {
+        const fetchMemberData = async () => {
+            try {
+                const response = await AxiosClient.get(`/usuario/${memberId}`);
+                setMemberData(response.data);
+            } catch (error) {
+                console.error("Error al obtener los datos del miembro:", error);
+                alertaError("Error", "No se pudieron cargar los datos del miembro.");
+            }
+        };
+
+        fetchMemberData();
+    }, [memberId]);
 
     const formik = useFormik({
+        enableReinitialize: true,
         initialValues: {
-            usuario: "",
-            correo: "",
-            contrasena: "",
-            confirmContra: "",
-            nombre: "",
-            apellido_p: "",
-            apellido_m: "",
-            telefono: "",
+            nombre: memberData?.nombre || "",
+            apellido_p: memberData?.apellido_p || "",
+            apellido_m: memberData?.apellido_m || "",
+            usuario: memberData?.usuario || "",
+            correo: memberData?.correo || "",
+            telefono: memberData?.telefono || "",
         },
         validationSchema: yup.object({
-            usuario: yup.string().required("Campo obligatorio"),
-            correo: yup.string().email("Correo inválido").required("Campo obligatorio"),
-            contrasena: yup.string().min(8, "Debe tener al menos 8 caracteres").required("Campo obligatorio"),
-            confirmContra: yup.string().oneOf([yup.ref("contrasena"), null], "Las contraseñas no coinciden").required("Campo obligatorio"),
             nombre: yup.string().required("Campo obligatorio"),
             apellido_p: yup.string().required("Campo obligatorio"),
             apellido_m: yup.string().required("Campo obligatorio"),
+            usuario: yup.string().required("Campo obligatorio"),
+            correo: yup.string().email("Correo inválido").required("Campo obligatorio"),
             telefono: yup.string().matches(/^\d{10}$/, "Debe ser un número de 10 dígitos").required("Campo obligatorio"),
         }),
         onSubmit: async (values) => {
             alertaPregunta(
                 "¿Estás seguro?",
-                "¿Deseas agregar este miembro?",
+                "¿Deseas guardar los cambios?",
                 async () => {
                     try {
-                        alertaCargando("Agregando miembro...", "Por favor espera un momento.");
+                        alertaCargando("Guardando cambios...", "Por favor espera un momento.");
 
-                        const userResponse = await AxiosClient.post("/usuario/", {
+                        await AxiosClient.put(`/usuario/${memberId}`, {
                             ...values,
-                            id_rol: 3, 
+                            id_rol: 3,
                         });
 
-                        const newUserId = userResponse.message.id_usuario;
-
-                        await AxiosClient.post(`/grupo/${grupoId}/add-usuario/${newUserId}`, {
-                            id_grupo: grupoId,
-                            id_usuario: newUserId,
-                        });
-
-                        alertaExito("Éxito", "El miembro se agregó correctamente.");
-                        onMemberAdded(); 
+                        alertaExito("Éxito", "El miembro se actualizó correctamente.");
+                        onMemberUpdated(); 
                         onClose(); 
                     } catch (error) {
-                        console.error("Error al agregar el miembro:", error);
-                        alertaError("Error", "No se pudo agregar el miembro. Intenta nuevamente.");
+                        console.error("Error al actualizar el miembro:", error);
+                        alertaError("Error", "No se pudo actualizar el miembro. Intenta nuevamente.");
                     }
                 }
             );
         },
     });
 
+    if (!memberData) {
+        return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="text-black">Cargando datos del miembro...</div>
+            </div>
+        );
+    }
+
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center"
-            style={{
-                backgroundColor: "rgba(0, 0, 0, 0.5)",
-            }}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+        style={{
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+        }}
         >
             <div
-                id="add-member-modal"
+                id="edit-member-modal"
                 className="relative bg-white rounded-lg shadow-lg dark:bg-gray-900 w-full max-w-md mx-auto"
                 style={{
                     maxHeight: "80vh",
@@ -97,7 +107,7 @@ function AddMembers({ grupoId, onClose, onMemberAdded }) {
                     </div>
 
                     <h1 className="font-semibold text-xl text-start font-poppins text-black mb-6">
-                        Agregar Nuevo Miembro
+                        Editar Miembro
                     </h1>
 
                     <form onSubmit={formik.handleSubmit} className="space-y-2">
@@ -209,68 +219,6 @@ function AddMembers({ grupoId, onClose, onMemberAdded }) {
                             )}
                         </div>
 
-                        <div className="relative mb-2">
-                            <label className="block mb-2 text-sm font-poppins text-gray-900">Contraseña:</label>
-                            <div className="relative">
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    id="contrasena"
-                                    name="contrasena"
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    value={formik.values.contrasena}
-                                    required
-                                    className="w-full border border-gray-300 p-2 pr-12 custom-input"
-                                    placeholder="Contraseña"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={toggleShowPassword}
-                                    className="absolute inset-y-0 right-0 flex py-2 px-3 items-center text-gray-500"
-                                >
-                                    {showPassword ? (
-                                        <i className="pi pi-eye-slash"></i>
-                                    ) : (
-                                        <i className="pi pi-eye"></i>
-                                    )}
-                                </button>
-                            </div>
-                            {formik.touched.contrasena && formik.errors.contrasena && (
-                                <div className="text-red-600 text-sm mt-3">{formik.errors.contrasena}</div>
-                            )}
-                        </div>
-
-                        <div className="relative mb-2">
-                            <label className="block mb-2 text-sm font-poppins text-gray-900">Confirmar Contraseña:</label>
-                            <div className="relative">
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    id="confirmContra"
-                                    name="confirmContra"
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    value={formik.values.confirmContra}
-                                    required
-                                    className="w-full border border-gray-300 p-2 pr-12 custom-input"
-                                    placeholder="Confirmar Contraseña"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={toggleShowPassword}
-                                    className="absolute inset-y-0 right-0 flex py-2 px-3 items-center text-gray-500"
-                                >
-                                    {showPassword ? (
-                                        <i className="pi pi-eye-slash"></i>
-                                    ) : (
-                                        <i className="pi pi-eye"></i>
-                                    )}
-                                </button>
-                            </div>
-                            {formik.touched.confirmContra && formik.errors.confirmContra && (
-                                <div className="text-red-600 text-sm mt-3">{formik.errors.confirmContra}</div>
-                            )}
-                        </div>
-
                         <div className="flex justify-between items-center mt-4">
                             <button
                                 type="button"
@@ -293,4 +241,4 @@ function AddMembers({ grupoId, onClose, onMemberAdded }) {
     );
 }
 
-export default AddMembers;
+export default EditMember;

@@ -1,126 +1,116 @@
-import React, { useState } from 'react'
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
-import TableMembers from './components/TableMembers';
+import React, { useState, useEffect } from "react";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
+import TableMembers from "./components/TableMembers";
+import AddMembers from "./components/AddMembers";
+import { AxiosClient } from "../../config/http-gateway/http-client";
+import EditMember from "./components/EditMember";
+import { alertaCargando, alertaError, alertaExito, alertaPregunta } from "../../config/context/alert";
 
 function Members() {
+  const [members, setMembers] = useState([]);
+  const [showAddMemberModal, setShowAddMemberModal] = useState(false);
+  const [grupoId, setGrupoId] = useState(null);
+  const [showEditMemberModal, setShowEditMemberModal] = useState(false);
+  const [selectedMemberId, setSelectedMemberId] = useState(null);
 
-  const members = [
-    {
-      id: 1,
-      usuario: "Matsuri",
-      nombre: "Maximiliano",
-      apellido_p: "González",
-      apellido_m: "García",
-      telefono: "7771234567",
-      correo: "maximus_garcia@gmail.com"
-    },
-    {
-      id: 2,
-      usuario: "Luna",
-      nombre: "Lucía",
-      apellido_p: "Martínez",
-      apellido_m: "Hernández",
-      telefono: "5559876543",
-      correo: "lucia_martinez@gmail.com",
-    },
-    {
-      id: 3,
-      usuario: "Solaris",
-      nombre: "Sofía",
-      apellido_p: "López",
-      apellido_m: "Pérez",
-      telefono: "3334567890",
-      correo: "sofia_lopez@gmail.com",
-    },
-    {
-      id: 4,
-      usuario: "Shadow",
-      nombre: "Carlos",
-      apellido_p: "Ramírez",
-      apellido_m: "Torres",
-      telefono: "4441239876",
-      correo: "carlos_ramirez@gmail.com",
-    },
-    {
-      id: 5,
-      usuario: "Phoenix",
-      nombre: "Fernanda",
-      apellido_p: "Gómez",
-      apellido_m: "Sánchez",
-      telefono: "2227894561",
-      correo: "fernanda_gomez@gmail.com",
-    },
-    {
-      id: 6,
-      usuario: "Starlight",
-      nombre: "Alejandro",
-      apellido_p: "Morales",
-      apellido_m: "Castro",
-      telefono: "7776543210",
-      correo: "alejandro_morales@gmail.com",
-    },
-    {
-      id: 7,
-      usuario: "Nova",
-      nombre: "Valeria",
-      apellido_p: "Hernández",
-      apellido_m: "Ortiz",
-      telefono: "8883216547",
-      correo: "valeria_hernandez@gmail.com",
-    },
-    {
-      id: 8,
-      usuario: "Comet",
-      nombre: "Diego",
-      apellido_p: "Vargas",
-      apellido_m: "Rojas",
-      telefono: "6669871234",
-      correo: "diego_vargas@gmail.com",
-    },
-    {
-      id: 9,
-      usuario: "Aurora",
-      nombre: "Mariana",
-      apellido_p: "Cruz",
-      apellido_m: "Flores",
-      telefono: "9994567891",
-      correo: "mariana_cruz@gmail.com",
-    },
-    {
-      id: 10,
-      usuario: "Orion",
-      nombre: "Javier",
-      apellido_p: "Mendoza",
-      apellido_m: "Luna",
-      telefono: "1112345678",
-      correo: "javier_mendoza@gmail.com",
-    },
-    {
-      id: 11,
-      usuario: "Lyra",
-      nombre: "Isabella",
-      apellido_p: "Reyes",
-      apellido_m: "Navarro",
-      telefono: "5556781234",
-      correo: "isabella_reyes@gmail.com",
-    },
-  ];
+
+  const fetchGrupoId = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const userId = user?.usuario?.id_usuario;
+
+      if (userId) {
+        const response = await AxiosClient.get(`/grupo/`);
+        const filteredGroup = response.data.find(
+          (group) => group.usuario.id_usuario === userId
+        );
+        setGrupoId(filteredGroup.id_grupo);
+      }
+    } catch (error) {
+      console.error("Error al obtener el id_grupo:", error);
+    }
+  };
+
+  const fetchMembers = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const adminGroupId = user?.usuario?.id_usuario;
+
+      const response = await AxiosClient.get("/usuario/");
+      const filteredMembers = response.data.filter(
+        (member) =>
+          member.rol.rol === "USER" && member.grupo?.usuario?.id_usuario === adminGroupId
+      );
+
+      setMembers(filteredMembers);
+    } catch (error) {
+      console.error("Error al obtener los miembros:", error);
+    }
+  };
+
+  const handleEditMember = (memberId) => {
+    setSelectedMemberId(memberId);
+    setShowEditMemberModal(true);
+  };
+
+  const handleDeleteMember = async (memberId) => {
+    alertaPregunta(
+        "¿Estás seguro?",
+        "Esta acción no se puede deshacer. ¿Deseas eliminar este miembro?",
+        async () => {
+            try {
+                alertaCargando("Eliminando miembro...", "Por favor espera un momento.");
+                await AxiosClient.delete(`/usuario/${memberId}`);
+
+                alertaExito("Éxito", "El miembro ha sido eliminado correctamente.");
+                fetchMembers(); 
+            } catch (error) {
+                console.error("Error al eliminar el miembro:", error);
+                alertaError("Error", "No se pudo eliminar el miembro. Intenta nuevamente.");
+            }
+        }
+    );
+};
+
+  useEffect(() => {
+    fetchGrupoId();
+    fetchMembers();
+  }, []);
+
   return (
     <>
       <div className="px-8 font-poppins">
         <div className="flex justify-between mt-6 mb-4 px-8 py-3">
           <h2 className="font-poppins text-3xl font-semibold">Miembros</h2>
-          <button className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition">
+          <button
+            className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition"
+            onClick={() => setShowAddMemberModal(true)}
+          >
             <i className="pi pi-plus mr-2"></i> Nuevo Miembro
           </button>
         </div>
 
-        <TableMembers members={members} />
+        <TableMembers members={members} onEdit={handleEditMember} onDelete={handleDeleteMember}/>
 
+        {showAddMemberModal && (
+          <AddMembers
+            grupoId={grupoId}
+            onClose={() => setShowAddMemberModal(false)}
+            onMemberAdded={fetchMembers}
+          />
+        )}
+
+        {showEditMemberModal && (
+          <EditMember
+            memberId={selectedMemberId}
+            onClose={() => setShowEditMemberModal(false)}
+            onMemberUpdated={fetchMembers}
+          />
+        )}
       </div>
     </>
-  )
+  );
 }
 
-export default Members
+export default Members;

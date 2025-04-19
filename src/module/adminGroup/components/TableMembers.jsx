@@ -2,16 +2,23 @@ import React from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 
-const TableMembers = ({ members }) => {
+const TableMembers = ({ members, onEdit, onDelete }) => {
 
     const fullNameBodyTemplate = (rowData) => {
         return `${rowData.nombre} ${rowData.apellido_p} ${rowData.apellido_m}`;
     };
 
-    const actionsBodyTemplate = () => {
+    const rowNumberTemplate = (rowData, { rowIndex }) => {
+        return <span>{rowIndex + 1}</span>;
+    };
+
+    const actionsBodyTemplate = (rowData) => {
         return (
             <div className="flex space-x-2">
-                <button className="bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500 transition">
+                <button
+                    className="bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500 transition"
+                    onClick={() => onEdit(rowData.id_usuario)}
+                >
                     <svg
                         className="w-5 h-5 text-white"
                         aria-hidden="true"
@@ -30,7 +37,10 @@ const TableMembers = ({ members }) => {
                         />
                     </svg>
                 </button>
-                <button className="bg-red-700 text-white px-3 py-1 rounded hover:bg-red-800 transition">
+                <button
+                    className="bg-red-700 text-white px-3 py-1 rounded hover:bg-red-800 transition"
+                    onClick={() => onDelete(rowData.id_usuario)}
+                >
                     <svg
                         className="w-5 h-5 text-white"
                         aria-hidden="true"
@@ -55,7 +65,7 @@ const TableMembers = ({ members }) => {
 
     return (
         <DataTable value={members} className="p-datatable px-8 custom-datatable" paginator rows={7} tableStyle={{ minWidth: '50rem' }}>
-            <Column field="id" header="#" style={{ width: '20px' }}></Column>
+            <Column field="id" header="#" style={{ width: '20px' }} body={rowNumberTemplate}></Column>
             <Column field="usuario" header="Usuario"></Column>
             <Column header="Nombre Completo" body={fullNameBodyTemplate}></Column>
             <Column field="telefono" header="Teléfono"></Column>

@@ -60,16 +60,17 @@ const TablaEvents = ({
     else if (rowData.estatus === 'Finalizado') statusClass = 'bg-custom-red text-white';
 
     return (
-      <span
+      <button
         className={`px-2 py-2 rounded-full text-sm ${statusClass}`}
         style={{
           display: 'inline-block',
           width: '120px',
           textAlign: 'center',
         }}
+        onClick={() => onEditStatus(rowData.id_evento, rowData.estatus)}
       >
         {rowData.estatus}
-      </span>
+      </button>
     );
   };
 

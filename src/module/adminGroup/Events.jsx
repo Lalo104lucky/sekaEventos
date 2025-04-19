@@ -6,6 +6,7 @@ import AddEvent from './components/AddEvent';
 import { AxiosClient } from '../../config/http-gateway/http-client';
 import EditEvent from './components/EditEvent';
 import { alertaCargando, alertaError, alertaExito, alertaPregunta } from '../../config/context/alert';
+import EditStatus from './components/EditStatus';
 
 function Events() {
     const [events, setEvents] = useState([]);

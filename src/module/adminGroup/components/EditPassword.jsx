@@ -166,7 +166,7 @@ function EditPassword({ user, onClose }) {
                                     </button>
                                 </div>
                                 {formik.touched.currentPassword && formik.errors.currentPassword && (
-                                    <div className="text-red-600 text-sm">{formik.errors.currentPassword}</div>
+                                    <div className="text-red-600 text-sm mt-3">{formik.errors.currentPassword}</div>
                                 )}
                             </div>
 
@@ -233,7 +233,7 @@ function EditPassword({ user, onClose }) {
                                     </button>
                                 </div>
                                 {formik.touched.newPassword && formik.errors.newPassword && (
-                                    <div className="text-red-600 text-sm">{formik.errors.newPassword}</div>
+                                    <div className="text-red-600 text-sm mt-3">{formik.errors.newPassword}</div>
                                 )}
                             </div>
 
@@ -300,7 +300,7 @@ function EditPassword({ user, onClose }) {
                                     </button>
                                 </div>
                                 {formik.touched.confirmPassword && formik.errors.confirmPassword && (
-                                    <div className="text-red-600 text-sm">{formik.errors.confirmPassword}</div>
+                                    <div className="text-red-600 text-sm mt-3">{formik.errors.confirmPassword}</div>
                                 )}
                             </div>
 
