@@ -2,6 +2,8 @@ import React from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Dropdown } from 'primereact/dropdown';
+import { format } from 'date-fns'
+import fondo from '../../../assets/img/fondo.png';
 
 const TablaEvents = ({
   events,
@@ -11,6 +13,9 @@ const TablaEvents = ({
   setSelectedCategory,
   statusOptions,
   categoryOptions,
+  onEdit,
+  onDelete,
+  onEditStatus,
 }) => {
   const statusFilterTemplate = (options) => {
     return (
@@ -37,37 +42,44 @@ const TablaEvents = ({
           setSelectedCategory(e.value);
           options.filterApplyCallback(e.value);
         }}
-        placeholder="Seleccionar Categoría"
+        placeholder="Seleccionar Estado"
         className="p-column-filter"
         showClear
       />
     );
   };
 
+  const dateBodyTemplate = (rowData) => {
+    return format(new Date(rowData.fecha), 'dd/MM/yyyy HH:mm');
+  };
+
   const statusBodyTemplate = (rowData) => {
     let statusClass = '';
-    if (rowData.status === 'En Ejecución') statusClass = 'bg-custom-green text-white text-center';
-    else if (rowData.status === 'Próximamente') statusClass = 'bg-custom-yellow text-gray-900';
-    else if (rowData.status === 'Finalizado') statusClass = 'bg-custom-red text-white';
+    if (rowData.estatus === 'En Ejecución') statusClass = 'bg-custom-green text-white text-center';
+    else if (rowData.estatus === 'Próximamente') statusClass = 'bg-custom-yellow text-gray-900';
+    else if (rowData.estatus === 'Finalizado') statusClass = 'bg-custom-red text-white';
 
     return (
       <span
         className={`px-2 py-2 rounded-full text-sm ${statusClass}`}
         style={{
           display: 'inline-block',
-          width: '120px', // Ancho fijo para todos los estados
-          textAlign: 'center', // Centrado del texto
+          width: '120px',
+          textAlign: 'center',
         }}
       >
-        {rowData.status}
+        {rowData.estatus}
       </span>
     );
   };
 
-  const actionsBodyTemplate = () => {
+  const actionsBodyTemplate = (rowData) => {
     return (
       <div className="flex space-x-2">
-        <button className="bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500 transition">
+        <button
+          className="bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500 transition"
+          onClick={() => onEdit(rowData.id_evento)}
+        >
           <svg
             className="w-5 h-5 text-white"
             aria-hidden="true"
@@ -86,7 +98,10 @@ const TablaEvents = ({
             />
           </svg>
         </button>
-        <button className="bg-red-700 text-white px-3 py-1 rounded hover:bg-red-800 transition">
+        <button 
+          className="bg-red-700 text-white px-3 py-1 rounded hover:bg-red-800 transition"
+          onClick={() => onDelete(rowData.id_evento)}  
+        >
           <svg
             className="w-5 h-5 text-white"
             aria-hidden="true"
@@ -109,14 +124,30 @@ const TablaEvents = ({
     );
   };
 
+  const rowNumberTemplate = (rowData, { rowIndex }) => {
+    return <span>{rowIndex + 1}</span>;
+  };
+
+  const imageBodyTemplate = (rowData) => {
+    const imageUrl = `http://localhost:8080/api/evento/path/${rowData.imagen}`;
+    return (
+      <img
+        src={imageUrl}
+        alt={rowData.titulo}
+        className="w-10 h-10 object-cover rounded-lg"
+        onError={(e) => (e.target.src = { fondo })}
+      />
+    );
+  };
+
   return (
-    <DataTable value={events} className="p-datatable px-8 custom-datatable" paginator rows={10} tableStyle={{ minWidth: '50rem' }}>
-      <Column field="id" header="#" style={{ width: '20px' }}></Column>
-      <Column field="title" header="Título"></Column>
-      <Column field="date" header="Fecha y Hora"></Column>
-      <Column field="location" header="Ubicación"></Column>
+    <DataTable value={events} className="p-datatable px-8 custom-datatable" paginator rows={6} tableStyle={{ minWidth: '50rem' }}>
+      <Column body={rowNumberTemplate} header="#" style={{ width: '20px' }}></Column>
+      <Column field="imagen" header="Imagen" body={imageBodyTemplate}></Column>
+      <Column field="titulo" header="Título"></Column>
+      <Column field="fecha" header="Fecha y Hora" body={dateBodyTemplate}></Column>
       <Column
-        field="category"
+        field="tipoEvento.nombre"
         header="Tipo de Evento"
         filter
         filterElement={tipeFilter}
@@ -124,7 +155,7 @@ const TablaEvents = ({
         showApplyButton={false}
       ></Column>
       <Column
-        field="status"
+        field="estatus"
         header="Estado"
         body={statusBodyTemplate}
         filter

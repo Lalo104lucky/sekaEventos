@@ -202,6 +202,14 @@ más fácil de saber que estoy metiendo */
   height: 82px;
   animation: spin 1s linear infinite;
 }
+.loader2 {
+  border: 5px solid #416327;
+  border-left-color: #D0DFBE;
+  border-radius: 50%;
+  width: 82px;
+  height: 82px;
+  animation: spin 1s linear infinite;
+}
 @keyframes spin {
   0% {
       transform: rotate(0deg);

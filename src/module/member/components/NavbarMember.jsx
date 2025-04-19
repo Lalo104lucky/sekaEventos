@@ -1,20 +1,33 @@
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom'; // Importar NavLink
-import Logo from '../../../assets/img/logo.png'; // Asegúrate de que la ruta sea correcta
+import React, { useState, useContext } from 'react';
+import { NavLink, useNavigate } from "react-router-dom";
+import Logo from '../../../assets/img/logo.png'; 
+import AuthContext from "../../../config/context/auth-context";
 
-const NavbarMember = () => {
+const NavbarMember = ({ perfilData }) => {
+  const navigate = useNavigate();
+  const { dispatch } = useContext(AuthContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
+  
+  
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    sessionStorage.removeItem("user");
+    dispatch({ type: "SIGNOUT" });
+    navigate("/");
+}
+
+  const nombreUsuario = perfilData?.usuario?.nombre || "Usuario";
 
   return (
     <>
-      <nav className="bg_dark_forest border-gray-200">
+      <nav className="bg_dark_forest border-gray-200 text-white py-4 px-2 flex justify-between items-center fixed w-full top-0 z-10">
         <div className="w-full flex justify-between items-center mx-auto p-4">
           <div className="flex items-center space-x-6">
-            <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
+            <a href="#" className="flex items-center space-x-3 rtl:space-x-reverse">
               <img src={Logo} className="h-8" alt="SEKA Logo" />
               <span className="font-poppins font-bold text-3xl text-white title">SEKA</span>
             </a>
@@ -23,6 +36,7 @@ const NavbarMember = () => {
               <ul className="flex flex-row p-0 font-medium">
                 <li>
                   <NavLink
+
                     to="/"
                     className="block py-2 px-3 text-xl text-white rounded-sm md:text-white font-semibold md:p-0"
                     aria-current="page"
@@ -47,13 +61,13 @@ const NavbarMember = () => {
             <div className="relative">
               <button
                 onClick={toggleDropdown}
-                className="text-white  font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                className="text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 type="button"
                 aria-expanded={isDropdownOpen ? "true" : "false"}
                 aria-haspopup="true"
               >
                 <span className="material-symbols-outlined mr-2">account_circle</span>
-                Nombre del usuario
+                {nombreUsuario}
                 <svg className="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                   <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
                 </svg>
@@ -73,9 +87,14 @@ const NavbarMember = () => {
                       Perfil
                     </NavLink>
                   </li>
-                  <li>
-                    <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Cerrar Sesión</a>
-                  </li>
+                  <li >
+                  <button
+                  onClick={handleLogout}
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  Cerrar Sesión
+                </button> 
+                   </li>
                 </ul>
               </div>
             </div>

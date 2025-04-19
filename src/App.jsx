@@ -1,11 +1,11 @@
-import React, { useReducer, useEffect, use } from 'react'
+import React, { useReducer, useEffect } from 'react'
 import { authManager } from './config/context/auth-manager'
 import AuthContext from './config/context/auth-context'
 import AppRouter from './router/AppRouter'
 import { PrimeReactProvider } from 'primereact/api';
-import 'primereact/resources/themes/lara-light-blue/theme.css';  // Tema
-import 'primereact/resources/primereact.min.css';  // Componentes
-import 'primeicons/primeicons.css';  // Iconos
+import 'primereact/resources/themes/lara-light-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
 
 const init = () => JSON.parse(localStorage.getItem('user')) || { signed: false }
 
@@ -23,11 +23,11 @@ function App() {
 
   return (
     <PrimeReactProvider>
-      <AuthContext.Provider value={{ dispatch, user }}>
+        <AuthContext.Provider value={{ dispatch, user }}>
           <AppRouter />
-      </AuthContext.Provider>
+        </AuthContext.Provider>
     </PrimeReactProvider>
-    
+
   )
 }
 
