@@ -24,7 +24,7 @@ public class GrupoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(Long id) {
+    public ResponseEntity<?> getById(@PathVariable Long id) {
         try {
             return grupoService.findById(id);
         } catch (Exception e) {
@@ -42,8 +42,9 @@ public class GrupoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody GrupoDTO grupoDTO) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody GrupoDTO grupoDTO) {
         try {
+            grupoDTO.setId_grupo(id);
             return grupoService.update(grupoDTO);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -51,7 +52,7 @@ public class GrupoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(Long id) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
             return grupoService.delete(id);
         } catch (Exception e) {
