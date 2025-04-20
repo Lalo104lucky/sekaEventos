@@ -184,4 +184,16 @@ public class EventoService {
         return null;
     }
 
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> findEventosPorUsuario(Long idUsuario) {
+        List<Evento> eventos = eventoRepository.findEventosPorUsuario(idUsuario);
+        return customResponse.getOkResponse(eventos);
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> findAsistentesPorEventoYGrupo(Long eventoId, Long grupoId) {
+        List<Usuario> usuarios = eventoRepository.findAsistentesPorEventoYGrupo(eventoId, grupoId);
+        return customResponse.getOkResponse(usuarios);
+    }
+
 }

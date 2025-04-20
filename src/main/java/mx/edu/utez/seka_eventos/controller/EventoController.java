@@ -53,6 +53,24 @@ public class EventoController {
         }
     }
 
+    @GetMapping("/usuario/{idUsuario}/eventos")
+    public ResponseEntity<?> getEventosPorUsuario(@PathVariable Long idUsuario) {
+        try {
+            return eventoService.findEventosPorUsuario(idUsuario);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/evento/{eventoId}/grupo/{grupoId}/asistentes")
+    public ResponseEntity<?> getAsistentesPorEventoYGrupo(@PathVariable Long eventoId, @PathVariable Long grupoId) {
+        try {
+            return eventoService.findAsistentesPorEventoYGrupo(eventoId, grupoId);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @PostMapping("/")
     public ResponseEntity<?> create(@RequestBody EventoDTO eventoDTO) {
         try {
