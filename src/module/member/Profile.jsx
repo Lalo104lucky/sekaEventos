@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import Swal from 'sweetalert2';
 import { AxiosClient } from '../../config/http-gateway/http-client';
+import { alertaExito, alertaError, alertaCargando, alertaPregunta } from '../../config/context/alert';
 
 const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
     const usuarioInfo = perfilData?.usuario || "No hay datos";
@@ -12,6 +12,7 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
     const idUsuario = perfilData?.usuario?.id_usuario || "no hay id ";
     const usuario = perfilData?.usuario?.usuario || "no hay id ";
     const idRol = perfilData?.usuario?.rol?.id_rol || "no hay datos";
+    const idGrupo = perfilData?.usuario?.grupo?.id_grupo || "no hay datos";
 
     const [showPassword, setShowPassword] = useState({
         newPassword: false,
@@ -31,39 +32,50 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
             obtenerDatosLocalStorage();
         }
     }
-    // CSS class variables for repeated styles
     const styles = {
         container: "grid grid-cols-3 gap-4 w-full h-screen p-8 overflow-hidden",
-        panel: "border-sage color-dark p-4 flex flex-col justify-center items-center space-y-2",
+        panel: "border-sage color-dark p-4 flex flex-col justify-center items-center space-y-2 h-[30%]",
         divider: "line-sage w-full h-1",
         sectionTitle: "text-xl mb-2 font-medium",
         inputContainer: "relative",
         inputIcon: "absolute w-8 h-10 text-[#001C0E] items-center ps-2",
         inputField: "colorInput text-sm rounded-lg block w-full pl-10 mb-3",
-        passwordField: "colorInput text-sm rounded-lg block w-full pl-10 mb-3 pr-10",
-        passwordToggleBtn: "absolute inset-y-0 right-0 mt-4 pr-4",
+        passwordField: "colorInput text-sm rounded-lg block w-full pl-10 mb-3 pr-10", 
+        passwordToggleBtn: "absolute inset-y-0 right-0 flex items-center justify-center px-2", 
         cancelButton: "w-1/3 cancelButton border-2 font-medium rounded-lg text-sm px-5 py-2.5",
         submitButton: "w-1/3 styleButton font-medium rounded-lg text-sm px-5 py-2.5",
         formButtonContainer: "flex justify-end space-x-2 mt-4",
         inputLabel: "block mb-2 text-sm font-medium"
     };
-
+    
     // Esquema de validación para información personal
     const userFormSchema = yup.object({
         nombre: yup
             .string()
             .min(2, "El nombre debe tener al menos 2 caracteres")
             .max(50, "El nombre no debe exceder los 50 caracteres")
+            .matches(
+                /^[A-ZÑÁÉÍÓÚ][a-zñáéíóú]*(\s[A-ZÑÁÉÍÓÚ][a-zñáéíóú]*)?$/,
+                "El nombre debe iniciar con mayúscula y puede tener uno o dos nombres"
+            )
             .required("El nombre es obligatorio"),
         apellido_p: yup
             .string()
             .min(2, "El apellido paterno debe tener al menos 2 caracteres")
             .max(50, "El apellido paterno no debe exceder los 50 caracteres")
+            .matches(
+                /^[A-ZÑÁÉÍÓÚ][a-zñáéíóú]*$/,
+                "Debe iniciar con mayúscula y no contener espacios ni caracteres especiales"
+            )
             .required("El apellido paterno es obligatorio"),
         apellido_m: yup
             .string()
             .min(2, "El apellido materno debe tener al menos 2 caracteres")
-            .max(50, "El apellido materno no debe exceder los 50 caracteres"),
+            .max(50, "El apellido materno no debe exceder los 50 caracteres")
+            .matches(
+                /^[A-ZÑÁÉÍÓÚ][a-zñáéíóú]*$/,
+                "Debe iniciar con mayúscula y no contener espacios ni caracteres especiales"
+            ),
         correo: yup
             .string()
             .email("Ingrese un correo electrónico válido")
@@ -73,6 +85,7 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
             .matches(/^[0-9]{10}$/, "El teléfono debe contener 10 dígitos numéricos")
             .required("El teléfono es obligatorio"),
     });
+
     useEffect(() => {
         if (usuarioInfo) {
             userFormik.setValues({
@@ -89,7 +102,10 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
     const passwordFormSchema = yup.object({
         newPassword: yup
             .string()
-            .min(8, "La contraseña debe tener al menos 8 caracteres")
+            .matches(
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/,
+                "La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, una minúscula, un número y un carácter especial"
+            )
             .required("La nueva contraseña es obligatoria"),
         confirmPassword: yup
             .string()
@@ -99,7 +115,6 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
             .string()
             .required("La contraseña actual es obligatoria"),
     });
-
     const userFormik = useFormik({
         initialValues: {
             usuario: usuarioInfo?.usuario || "Usuario",
@@ -111,30 +126,16 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
         },
         validationSchema: userFormSchema,
         onSubmit: async (values) => {
-            try {
-                // Mostrar alerta de confirmación
-                Swal.fire({
-                    title: "¿Estás seguro?",
-                    text: "¿Está seguro de actualizar la información del usuario?",
-                    icon: "question",
-                    showCancelButton: true,
-                    confirmButtonText: "Sí, actualizar",
-                    cancelButtonText: "Cancelar",
-                }).then(async (result) => {
-                    if (result.isConfirmed) {
-                        // Mostrar carga
-                        Swal.fire({
-                            title: "Guardando cambios...",
-                            allowOutsideClick: false,
-                            didOpen: () => {
-                                Swal.showLoading();
-                            }
-                        });
+            alertaPregunta(
+                "¿Estás seguro?",
+                "¿Está seguro de actualizar la información del usuario?",
+                async () => {
+                    try {
+                        alertaCargando("Guardando cambios...", "Espere un momento");
 
-                        // Preparar payload
                         const payload = {
-                            // Ajusta según la estructura requerida por tu API
                             id_usuario: idUsuario,
+                            id_grupo: idGrupo,
                             usuario: usuario,
                             nombre: values.nombre,
                             apellido_p: values.apellido_p,
@@ -143,6 +144,7 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
                             correo: values.correo,
                             id_rol: idRol,
                         };
+                        console.log("datos enviados ", payload);
 
                         const response = await AxiosClient({
                             url: `usuario/${idUsuario}`,
@@ -153,28 +155,22 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
                                 "Content-Type": "application/json",
                             },
                         });
+
                         console.log("Response:", response.data);
                         const data = response.data;
                         console.log(data);
                         actualizarInformacionLocalStorage(data);
-                        // Mostrar mensaje de éxito
-                        Swal.fire({
-                            title: "Éxito",
-                            text: "Se actualizó correctamente la información del usuario",
-                            icon: "success",
-                        });
+
+                        alertaExito("Éxito", "Se actualizó correctamente la información del usuario");
+                    } catch (error) {
+                        console.error("Error:", error);
+                        alertaError("Error", "Error al actualizar la información del usuario");
                     }
-                });
-            } catch (error) {
-                console.error("Error:", error);
-                Swal.fire({
-                    title: "Error",
-                    text: "Error al actualizar la información del usuario",
-                    icon: "error",
-                });
-            }
+                }
+            );
         },
     });
+
     // Formik para formulario de contraseña
     const passwordFormik = useFormik({
         initialValues: {
@@ -184,29 +180,17 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
         },
         validationSchema: passwordFormSchema,
         onSubmit: async (values) => {
-            try {
-                // Mostrar alerta de confirmación
-                Swal.fire({
-                    title: "¿Estás seguro?",
-                    text: "¿Está seguro de cambiar la contraseña?",
-                    icon: "question",
-                    showCancelButton: true,
-                    confirmButtonText: "Sí, cambiar",
-                    cancelButtonText: "Cancelar",
-                }).then(async (result) => {
-                    if (result.isConfirmed) {
-                        // Mostrar carga
-                        Swal.fire({
-                            title: "Guardando cambios...",
-                            allowOutsideClick: false,
-                            didOpen: () => {
-                                Swal.showLoading();
-                            }
-                        });
+            alertaPregunta(
+                "¿Estás seguro?",
+                "¿Está seguro de cambiar la contraseña?",
+                async () => {
+                    try {
+                        alertaCargando("Guardando cambios...", "Espere un momento");
 
                         const payload = {
                             contrasena: values.newPassword,
                         };
+
                         const response = await AxiosClient({
                             url: `usuario/changeContra/${idUsuario}`,
                             method: "PATCH",
@@ -215,31 +199,29 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
 
                         console.log("Response:", response.data);
 
-                        // Mostrar mensaje de éxito
-                        Swal.fire({
-                            title: "Éxito",
-                            text: "Se actualizó correctamente la contraseña",
-                            icon: "success",
-                        });
+                        alertaExito("Éxito", "Se actualizó correctamente la contraseña");
 
                         // Limpiar formulario
                         passwordFormik.resetForm();
+                    } catch (error) {
+                        console.error("Error:", error);
+                        alertaError("Error", "Error al actualizar la contraseña");
                     }
-                });
-            } catch (error) {
-                console.error("Error:", error);
-                Swal.fire({
-                    title: "Error",
-                    text: "Error al actualizar la contraseña",
-                    icon: "error",
-                });
-            }
+                }
+            );
         }
     });
 
     // Función para resetear el formulario de usuario
     const handleResetUserForm = () => {
-        userFormik.resetForm();
+        userFormik.setValues({
+            usuario: usuarioInfo?.usuario || "Usuario",
+            nombre: usuarioInfo?.nombre || "",
+            apellido_p: usuarioInfo?.apellido_p || "",
+            apellido_m: usuarioInfo?.apellido_m || "",
+            correo: usuarioInfo?.correo || "",
+            telefono: usuarioInfo?.telefono || "",
+        });
     };
 
     // Función para resetear el formulario de contraseña
@@ -258,30 +240,29 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
     return (
         <div className={styles.container}>
 
-            <div className="grid-rows-3 h-full flex flex-col min-h-0">
-
+            <div className="grid-rows-3 h-full flex flex-col ">
                 <div className={`${styles.panel} mb-5 flex-grow`}>
                     <svg className="w-32 h-32 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.948 8.948 0 0 0 12 21Zm3-11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                     </svg>
-                    <p className="text-xl font-medium text-center">{usuarioInfo?.nombre} {usuarioInfo?.apellido_p} {usuarioInfo?.apellido_m}</p>
-                    <p className="text-sm font-regular">{usuarioInfo?.correo}</p>
+                    <p className="text-2xl font-medium text-center">{usuarioInfo?.nombre} {usuarioInfo?.apellido_p} {usuarioInfo?.apellido_m}</p>
+                    <p className="text-xl font-regular">{usuarioInfo?.correo}</p>
                     <p className="text-sm font-regular">{usuarioInfo?.telefono}</p>
                 </div>
 
-                <div className={`${styles.panel} flex-grow`}>
+                <div className={`${styles.panel} flex-grow h-full`}>
                     <svg className="w-32 h-32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" strokeLinecap="round" strokeWidth="1" d="M4.5 17H4a1 1 0 0 1-1-1 3 3 0 0 1 3-3h1m0-3.05A2.5 2.5 0 1 1 9 5.5M19.5 17h.5a1 1 0 0 0 1-1 3 3 0 0 0-3-3h-1m0-3.05a2.5 2.5 0 1 0-2-4.45m.5 13.5h-7a1 1 0 0 1-1-1 3 3 0 0 1 3-3h3a3 3 0 0 1 3 3 1 1 0 0 1-1 1Zm-1-9.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z" />
                     </svg>
-                    <p className="text-xl font-medium text-gray-500">Grupo Perteneciente</p>
-                    <p className="text-sm font-regular">Correo</p>
-                    <p className="text-sm font-regular">Correo</p>
-                    <p className={`${styles.divider} mt-5`} />
+                    <p className="text-2xl font-medium text-gray-500 text-center">{usuarioInfo?.grupo?.nombre}</p>
+                    <p className="text-xl font-regular">{usuarioInfo?.grupo?.municipio}</p>
+                    <p className="text-sm font-regular">{usuarioInfo?.grupo?.colonia}</p>
+                    <p className={`${styles.divider} mt-8`} />
                     <svg className="w-16 h-16 mt-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.948 8.948 0 0 0 12 21Zm3-11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                     </svg>
-                    <p className="text-xl font-medium">Nombre</p>
-                    <p className="text-sm font-regular">Correo</p>
+                    <p className="text-2xl font-medium">{usuarioInfo?.grupo?.usuario?.nombre} {usuarioInfo?.grupo?.usuario?.apellido_m}</p>
+                    <p className="text-sm font-regular">{usuarioInfo?.grupo?.usuario?.correo}</p>
                 </div>
             </div>
 
@@ -416,7 +397,7 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
                     </div>
                 </form>
                 <p className={`${styles.divider} mt-5 mb-2`}></p>
-                <p className={styles.sectionTitle}>Información de Inicio de Sesión</p>
+                <p className={styles.sectionTitle}>Cambiar Contraseña</p>
 
                 <form onSubmit={passwordFormik.handleSubmit} action="#" method="post" id="formUpdatePassword">
                     <div className="grid grid-cols-3 gap-4">
@@ -452,10 +433,10 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
                                         </svg>
                                     )}
                                 </button>
-                                {passwordFormik.touched.newPassword && passwordFormik.errors.newPassword && (
-                                    <p className="text-red-500 text-sm mt-1">{passwordFormik.errors.newPassword}</p>
-                                )}
                             </div>
+                            {passwordFormik.touched.newPassword && passwordFormik.errors.newPassword && (
+                                <p className="text-red-500 text-sm mt-1">{passwordFormik.errors.newPassword}</p>
+                            )}
                         </div>
                         <div className={styles.inputContainer}>
                             <label className={styles.inputLabel}>Confirmar Contraseña:</label>
@@ -490,10 +471,10 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
                                         </svg>
                                     )}
                                 </button>
-                                {passwordFormik.touched.confirmPassword && passwordFormik.errors.confirmPassword && (
-                                    <p className="text-red-500 text-sm mt-1">{passwordFormik.errors.confirmPassword}</p>
-                                )}
                             </div>
+                            {passwordFormik.touched.confirmPassword && passwordFormik.errors.confirmPassword && (
+                                <p className="text-red-500 text-sm mt-1">{passwordFormik.errors.confirmPassword}</p>
+                            )}
                         </div>
                         <div className={styles.inputContainer}>
                             <label className={styles.inputLabel}>Contraseña Actual:</label>
@@ -526,20 +507,18 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
                                         </svg>
                                     )}
                                 </button>
-                                {passwordFormik.touched.currentPassword && passwordFormik.errors.currentPassword && (
-                                    <p className="text-red-500 text-sm mt-1">{passwordFormik.errors.currentPassword}</p>
-                                )}
                             </div>
+                            {passwordFormik.touched.currentPassword && passwordFormik.errors.currentPassword && (
+                                <p className="text-red-500 text-sm mt-1">{passwordFormik.errors.currentPassword}</p>
+                            )}
                         </div>
                     </div>
 
                     <div className={styles.formButtonContainer}>
-                        <button type="button" className={styles.cancelButton}>Descartar</button>
+                        <button type="button" className={styles.cancelButton} onClick={handleResetPasswordForm}>Descartar</button>
                         <button type="submit" className={styles.submitButton}>Modificar</button>
                     </div>
                 </form>
-
-
             </div>
         </div>
     );

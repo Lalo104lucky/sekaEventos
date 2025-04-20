@@ -16,33 +16,34 @@ import Groups from '../module/admin/Groups';
 import AdminGroups from '../module/admin/AdminGroups';
 import Logo from '../assets/img/Logo.png';
 import EventsMember from '../module/member/Events';
+import Page404 from '../module/auth/Page404';
+import ProfileMember from '../module/member/Profile';
 
 const AppRouter = () => {
     const { user } = useContext(AuthContext);
     const [loading, setLoading] = useState(false);;
 
-    // const [perfilData, setPerfilData] = useState(null);
+    const [perfilData, setPerfilData] = useState(null);
     
-    // const obtenerDatosLocalStorage=()=>{
-    //     const userData = localStorage.getItem('user');
-    //     if (userData) {
-    //         try {
-    //             const parsedData = JSON.parse(userData);
-    //             // Extraer información del perfil
-    //             const perfilInfo = parsedData|| {};
-    //             setPerfilData(perfilInfo);
-    //             console.log("funcion ejecutada")
-    //         } catch (error) {
-    //             console.error("Error al parsear datos del usuario:", error);
-    //         }
-    //     }
+    const obtenerDatosLocalStorage=()=>{
+        const userData = localStorage.getItem('user');
+        if (userData) {
+            try {
+                const parsedData = JSON.parse(userData);
+                const perfilInfo = parsedData|| {};
+                setPerfilData(perfilInfo);
+                console.log("funcion ejecutada")
+            } catch (error) {
+                console.error("Error al parsear datos del usuario:", error);
+            }
+        }
 
-    // }
+    }
     
-    // useEffect(() => {
-    //     console.log("funcion ejecutada")
-    //     obtenerDatosLocalStorage();
-    // }, []);
+    useEffect(() => {
+        console.log("funcion ejecutada")
+        obtenerDatosLocalStorage();
+    }, []);
 
 
     const getRole = () => {
@@ -97,9 +98,10 @@ const AppRouter = () => {
                                     </ProtectedRoute>
                                 }>
                                      <Route index path="/" element={<EventsMember setLoading={setLoading}/>} />
-                                     {/* <Route path="/perfil-miembro" element={<ProfileMember setLoading={setLoading} perfilData={perfilData} obtenerDatosLocalStorage={obtenerDatosLocalStorage}/>} /> */}
+                                     <Route path="/perfil-miembro" element={<ProfileMember setLoading={setLoading} perfilData={perfilData} obtenerDatosLocalStorage={obtenerDatosLocalStorage}/>} />
                                 </Route>
                             )}
+                            <Route path="*" element={<Page404 />} />
                         </>
                     ) : (
                         <>
