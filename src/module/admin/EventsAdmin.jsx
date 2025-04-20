@@ -26,8 +26,8 @@ function EventsAdmin() {
     const handleModalCategoryEdit = (event) => {
         formikEditTipoEvento.setValues({
             id: event.id_tipoevento,
-            nombre: event.nombre
-        })
+            nombre: event.nombre,
+          });
         setIsModalCategoryEdit(!isModalCategoryEdit);
     }
 
@@ -50,46 +50,64 @@ function EventsAdmin() {
             nombre: ""
         },
         validationSchema: yup.object().shape({
-            nombre: yup.string().required("Campo Obligatorio")
+            nombre: yup.string().required("Campo Obligatorio").max(50, "Máximo 50 caracteres") 
         }),
         onSubmit: async (values) => {
-            try{
-                alertaCargando("Cargando", "Guardando los datos")
-                await AxiosClient.post("/tipoevento/", values)
-                alertaExito("Exito", "Se guardo correctamente tipo de evento")
-            }catch(error){
-                alertaError("Error", "Algo salio mal")
-            }finally{
-                handleModalCategory()
-                await getCategories()
-            }
+            alertaPregunta(
+                "Crear Tipo de Evento",
+                `¿Estás seguro de que deseas crear el tipo de evento "${values.nombre}"?`,
+                async () => {
+                    try {
+                        alertaCargando("Cargando", "Guardando los datos");
+                        await AxiosClient.post("/tipoevento/", values);
+                        alertaExito("Éxito", "Se guardó correctamente el tipo de evento");
+                    } catch (error) {
+                        alertaError("Error", "Algo salió mal");
+                    } finally {
+                        handleModalCategory();
+                        await getCategories();
+                    }
+                },
+                () => {
+                    alertaError("Cancelado", "La creación fue cancelada");
+                }
+            );
         }
-    })
-
+    });
+    
     const formikEditTipoEvento = useFormik({
         initialValues: {
-            id:"", 
+            id: "",
             nombre: "",
         },
         validationSchema: yup.object().shape({
             nombre: yup.string().required("Campo Obligatorio")
         }),
         onSubmit: async (values) => {
-            try{
-                alertaCargando("Cargando", "Guardando los datos")
-                await AxiosClient.put(`/tipoevento/${values.id}`, {
-                    id_tipoevento: values.id,
-                    nombre: values.nombre
-                })
-                alertaExito("Exito", "Se guardo correctamente el tipo de evento")    
-            }catch(error){
-                alertaError("Error", "Algo Salio mal")
-            }finally{
-                setIsModalCategoryEdit(false);
-                await getCategories();
-            }
+            alertaPregunta(
+                "Actualizar Tipo de Evento",
+                `¿Estás seguro de que deseas actualizar el tipo de evento a "${values.nombre}"?`,
+                async () => {
+                    try {
+                        alertaCargando("Cargando", "Guardando los datos");
+                        await AxiosClient.put(`/tipoevento/${values.id}`, {
+                            id_tipoevento: values.id,
+                            nombre: values.nombre
+                        });
+                        alertaExito("Éxito", "Se actualizó correctamente el tipo de evento");
+                    } catch (error) {
+                        alertaError("Error", "Algo salió mal");
+                    } finally {
+                        setIsModalCategoryEdit(false);
+                        await getCategories();
+                    }
+                },
+                () => {
+                    alertaError("Cancelado", "La actualización fue cancelada");
+                }
+            );
         }
-    })
+    });
 
     const eliminarTipoEvento = (event) => {
         alertaPregunta(
@@ -124,17 +142,21 @@ function EventsAdmin() {
     const getCategories = async () => {
         try{
             const response = await AxiosClient.get('/tipoevento/');
-            setCategory(response.data);
+            const categories = response.data.map((tipo) => ({
+                id_tipoevento: tipo.id_tipoevento,
+                nombre: tipo.nombre,
+                label: tipo.nombre,
+                value: tipo.nombre,
+            }));
+            console.log(categories)
+            setCategory(categories);
         }catch(error){
-            alertaError("Error", "No se encuentran tipo de eventos")
+            console.error('Error fetching events:', error);
         }
     }
 
     useEffect(() => {
         getEvents();
-    }, [])
-
-    useEffect(()=>{
         getCategories();
     }, [])
 
@@ -167,15 +189,21 @@ function EventsAdmin() {
         <div className="grid grid-cols-3 gap-4 mb-6 px-8">
             <div className="bg-custom-green text-white p-4 rounded-lg shadow-md flex flex-col items-center justify-center">
                 <h3 className="text-lg">Eventos en Ejecución</h3>
-                <p className="text-4xl font-bold mt-2">5</p>
+                <p className="text-4xl font-bold mt-2">
+                    {events.filter(event => event.estatus === "En Ejecución").length}
+                </p>
             </div>
             <div className="bg-custom-yellow text-black p-4 rounded-lg shadow-md flex flex-col items-center justify-center">
                 <h3 className="text-lg">Eventos Próximos</h3>
-                <p className="text-4xl font-bold mt-2">5</p>
+                <p className="text-4xl font-bold mt-2">
+                    {events.filter(event => event.estatus === "Próximamente").length}
+                </p>
             </div>
             <div className="bg-custom-red text-white p-4 rounded-lg shadow-md flex flex-col items-center justify-center">
                 <h3 className="text-lg">Eventos Finalizados</h3>
-                <p className="text-4xl font-bold mt-2">15</p>
+                <p className="text-4xl font-bold mt-2">
+                    {events.filter(event => event.estatus === "Finalizado").length}
+                </p>
             </div>
         </div>
         <div className='flex justify-between mt-6 mb-4 px-8 py-3'>
@@ -187,14 +215,17 @@ function EventsAdmin() {
                 Crear Nuevo Tipo de Evento
             </button>
         </div>
-        <Slider ref={slider => {
+        {
+            category.length > 0 ? (
+                <>
+                    <Slider ref={slider => {
                 sliderRef = slider;
             }} {...carouselSettings}>
             {category.map((event, index) => (
                 <div key={index} className="p-2">
                     <div className='bg-white text-black p-4 rounded-lg shadow-md flex justify-between w-full'>
                         <span className="material-symbols-outlined">psychiatry</span>
-                        <p className='text-base font-semibold text-center truncate mx-2'>{event.nombre}</p>
+                        <p className='text-base font-semibold text-center truncate mx-2'>{event.label}</p>
                         <div className="flex items-center justify-center space-x-2">
                             <button 
                                 className="bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500 transition"
@@ -259,6 +290,13 @@ function EventsAdmin() {
                 <span className="material-symbols-outlined text-white">arrow_forward</span>
             </button>
         </div>
+                </>
+            ) : (
+                <div className="flex justify-center items-center h-32">
+                    <p className="text-black-500">No hay tipos de eventos disponibles</p>
+                </div>
+            )
+        }
         <div className='flex justify-between mt-6 mb-4 px-8 py-3'>
             <h2 className='text-2xl font-bold'>Eventos</h2>
         </div>
@@ -273,7 +311,10 @@ function EventsAdmin() {
         />
         {
             isModalCategoryOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="fixed inset-0 z-50 flex items-center justify-center" 
+                style={{
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                }}>
                     <div className="bg-white p-6 rounded-lg shadow-lg w-96">
                         <h2 className="text-xl font-bold mb-4">Crear Nuevo Tipo de Evento</h2>
                         <form noValidate onSubmit={formikTipoEvento.handleSubmit}> 
@@ -320,8 +361,11 @@ function EventsAdmin() {
         }
         {
             isModalCategoryEdit && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+                <div className="fixed inset-0 z-50 flex items-center justify-center" 
+                    style={
+                        {backgroundColor: "rgba(0, 0, 0, 0.5)",}
+                    }>
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-96" >
                         <h2 className="text-xl font-bold mb-4">Actualizar Nuevo Tipo de Evento</h2>
                         <form noValidate onSubmit={formikEditTipoEvento.handleSubmit}>
                         <input

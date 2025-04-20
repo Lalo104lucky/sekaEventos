@@ -11,7 +11,6 @@ import Events from '../module/adminGroup/Events';
 import Members from '../module/adminGroup/Members';
 import Page401 from '../module/auth/Page401';
 import ProtectedRoute from './ProtectedRouter';
-import ProfileMember from '../module/member/Profile';
 import EventsAdmin from '../module/admin/EventsAdmin';
 import Groups from '../module/admin/Groups';
 import AdminGroups from '../module/admin/AdminGroups';
@@ -22,28 +21,28 @@ const AppRouter = () => {
     const { user } = useContext(AuthContext);
     const [loading, setLoading] = useState(false);;
 
-    const [perfilData, setPerfilData] = useState(null);
+    // const [perfilData, setPerfilData] = useState(null);
     
-    const obtenerDatosLocalStorage=()=>{
-        const userData = localStorage.getItem('user');
-        if (userData) {
-            try {
-                const parsedData = JSON.parse(userData);
-                // Extraer información del perfil
-                const perfilInfo = parsedData|| {};
-                setPerfilData(perfilInfo);
-                console.log("funcion ejecutada")
-            } catch (error) {
-                console.error("Error al parsear datos del usuario:", error);
-            }
-        }
+    // const obtenerDatosLocalStorage=()=>{
+    //     const userData = localStorage.getItem('user');
+    //     if (userData) {
+    //         try {
+    //             const parsedData = JSON.parse(userData);
+    //             // Extraer información del perfil
+    //             const perfilInfo = parsedData|| {};
+    //             setPerfilData(perfilInfo);
+    //             console.log("funcion ejecutada")
+    //         } catch (error) {
+    //             console.error("Error al parsear datos del usuario:", error);
+    //         }
+    //     }
 
-    }
+    // }
     
-    useEffect(() => {
-        console.log("funcion ejecutada")
-        obtenerDatosLocalStorage();
-    }, []);
+    // useEffect(() => {
+    //     console.log("funcion ejecutada")
+    //     obtenerDatosLocalStorage();
+    // }, []);
 
 
     const getRole = () => {
@@ -80,7 +79,6 @@ const AppRouter = () => {
                                     <Route index element={<EventsAdmin setLoading={setLoading}/>} />
                                     <Route path='/grupos' element={<Groups setLoading={setLoading}/>} />
                                     <Route path='/admingroups' element={<AdminGroups setLoading={setLoading}/>} />
-                                    {/* <Route path='/cuenta' element={<Profile />} /> */}
                                 </Route>
 
                             ) : role === "ADMIN_GROUP" ? (
@@ -99,7 +97,7 @@ const AppRouter = () => {
                                     </ProtectedRoute>
                                 }>
                                      <Route index path="/" element={<EventsMember setLoading={setLoading}/>} />
-                                     <Route path="/perfil-miembro" element={<ProfileMember setLoading={setLoading} perfilData={perfilData} obtenerDatosLocalStorage={obtenerDatosLocalStorage}/>} />
+                                     {/* <Route path="/perfil-miembro" element={<ProfileMember setLoading={setLoading} perfilData={perfilData} obtenerDatosLocalStorage={obtenerDatosLocalStorage}/>} /> */}
                                 </Route>
                             )}
                         </>

@@ -2,6 +2,8 @@ import React from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Dropdown } from 'primereact/dropdown';
+import { format } from 'date-fns'
+import fondo from '../../../assets/img/fondo.png';
 
 const TablaEventsAdmin = ({
   events,
@@ -47,9 +49,9 @@ const TablaEventsAdmin = ({
 
   const statusBodyTemplate = (rowData) => {
     let statusClass = '';
-    if (rowData.status === 'En Ejecución') statusClass = 'bg-custom-green text-white text-center';
-    else if (rowData.status === 'Próximamente') statusClass = 'bg-custom-yellow text-gray-900';
-    else if (rowData.status === 'Finalizado') statusClass = 'bg-custom-red text-white';
+    if (rowData.estatus === 'En Ejecución') statusClass = 'bg-custom-green text-white text-center';
+    else if (rowData.estatus === 'Próximamente') statusClass = 'bg-custom-yellow text-gray-900';
+    else if (rowData.estatus === 'Finalizado') statusClass = 'bg-custom-red text-white';
 
     return (
       <span
@@ -60,19 +62,40 @@ const TablaEventsAdmin = ({
           textAlign: 'center', // Centrado del texto
         }}
       >
-        {rowData.status}
+        {rowData.estatus}
       </span>
     );
   };
 
+  const imageBodyTemplate = (rowData) => {
+      const imageUrl = `http://localhost:8080/api/evento/path/${rowData.imagen}`;
+      return (
+        <img
+          src={imageUrl}
+          alt={rowData.titulo}
+          className="w-10 h-10 object-cover rounded-lg"
+          onError={(e) => (e.target.src = { fondo })}
+        />
+      );
+    };
+
+    const dateBodyTemplate = (rowData) => {
+        return format(new Date(rowData.fecha), 'dd/MM/yyyy HH:mm');
+      };
+
+    const rowNumberTemplate = (rowData, { rowIndex }) => {
+      return <span>{rowIndex + 1}</span>;
+    };
+  
+
   return (
     <DataTable value={events} className="p-datatable px-8 custom-datatable" paginator rows={7} tableStyle={{ minWidth: '50rem' }}>
-      <Column field="id" header="#" style={{ width: '20px' }}></Column>
-      <Column field="title" header="Título"></Column>
-      <Column field="date" header="Fecha y Hora"></Column>
-      <Column field="location" header="Ubicación"></Column>
+      <Column body={rowNumberTemplate} header="#" style={{ width: '20px' }}></Column>
+      <Column field="imagen" header="Imagen" body={imageBodyTemplate}></Column>
+      <Column field="titulo" header="Título"></Column>
+      <Column field="fecha" header="Fecha y Hora" body={dateBodyTemplate}></Column>
       <Column
-        field="category"
+        field="tipoEvento.nombre"
         header="Tipo de Evento"
         filter
         filterElement={tipeFilter}
@@ -80,7 +103,7 @@ const TablaEventsAdmin = ({
         showApplyButton={false}
       ></Column>
       <Column
-        field="status"
+        field="estatus"
         header="Estado"
         body={statusBodyTemplate}
         filter

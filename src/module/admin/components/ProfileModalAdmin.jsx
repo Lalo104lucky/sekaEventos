@@ -3,7 +3,7 @@ import Logo from "../../../assets/img/fondo.png";
 import EditProfile from "./EditProfile";
 import EditPassword from "./EditPassword";
 
-function ProfileModal({ user, onClose }) {
+function ProfileModalAdmin({ user, onClose }) {
 
     const [isEditing, setIsEditing] = useState(false);
     const [isChangePassword, setIsChangePassword] = useState(false);
@@ -60,7 +60,7 @@ function ProfileModal({ user, onClose }) {
 
                         <div className="space-y-2">
                             <h2 className="text-2xl font-bold font-poppins">
-                                Perfil Administrador de Grupo {user.usuario.usuario}
+                                Perfil Administrador {user.usuario.usuario}
                             </h2>
                             <p className="text-lg text-gray-800 font-semibold font-poppins dark:text-gray-300">
                                 {user.usuario.nombre} {user.usuario.apellido_p} {user.usuario.apellido_m}
@@ -113,4 +113,4 @@ function ProfileModal({ user, onClose }) {
     );
 }
 
-export default ProfileModal;
+export default ProfileModalAdmin;

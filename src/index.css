@@ -191,11 +191,11 @@ más fácil de saber que estoy metiendo */
   padding: 20px; 
   background-color: #ffffff;
   max-width: 400px; 
-  border-top: 10px solid #3F54D1; 
+  border-top: 10px solid #416327; 
 }
 
 .loader {
-  border: 5px solid #3F54D1;
+  border: 5px solid #416327;
   border-left-color: #ffffff;
   border-radius: 50%;
   width: 82px;
@@ -223,7 +223,7 @@ más fácil de saber que estoy metiendo */
   padding: 20px; 
   background-color: #ffffff;
   max-width: 400px;
-  border-top: 10px solid #3F54D1; 
+  border-top: 10px solid #416327; 
 }
 
 .text-stroke {

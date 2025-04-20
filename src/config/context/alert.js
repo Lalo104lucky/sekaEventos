@@ -70,7 +70,7 @@ export const alertaPregunta = (titulo, mensaje, onConfirm, onCancel) => {
         icon: 'question',
         title: titulo,
         text: mensaje,
-        iconColor: '#3F54D1',
+        iconColor: '#416327',
         showCancelButton: true,
         confirmButtonText: 'Confirmar',
         cancelButtonText: 'Cancelar',
@@ -78,7 +78,7 @@ export const alertaPregunta = (titulo, mensaje, onConfirm, onCancel) => {
         reverseButtons: true, 
         customClass: {
             popup: 'custom-alert-pregunta',
-            confirmButton: 'bg-custom-blue text-white px-4 py-2 rounded ml-2', 
+            confirmButton: 'bg-custom-green text-white px-4 py-2 rounded ml-2', 
             cancelButton: 'bg-gray-300 text-gray-700 px-4 py-2 rounded mr-2', 
         }
     }).then((result) => {

@@ -2,18 +2,18 @@ import React from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 
-const TableAdminGroups = ({administradores}) => {
+const TableAdminGroups = ({administradores, editAdmin, grupos}) => {
     
     const fullNameBodyTemplate = (rowData) => {
         return `${rowData.nombre} ${rowData.apellido_p} ${rowData.apellido_m}`;
     };
 
-    const actionsBodyTemplate = () => {
+    const actionsBodyTemplate = (rowData) => {
         return (
             <div className="flex space-x-2">
                 <button 
                     className="bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500 transition"
-                    //onClick={handleModalEdit}
+                    onClick={()=>editAdmin(rowData)}
                 >
                     <svg
                         className="w-5 h-5 text-white"
@@ -37,9 +37,13 @@ const TableAdminGroups = ({administradores}) => {
         );
     };
 
+    const rowNumberTemplate = (rowData, { rowIndex }) => {
+        return <span>{rowIndex + 1}</span>;
+      };
+
     return (
         <DataTable value={administradores} className="p-datatable px-8 custom-datatable" paginator rows={7} tableStyle={{ minWidth: '50rem' }}>
-            <Column field="id" header="#" style={{ width: '20px' }}></Column>
+            <Column body={rowNumberTemplate} header="#" style={{ width: '20px' }}></Column>
             <Column header="Nombre completo" body={fullNameBodyTemplate}></Column>
             <Column field="correo" header="Correo Electronico"></Column>
             <Column field="telefono" header="Telefono"></Column>
