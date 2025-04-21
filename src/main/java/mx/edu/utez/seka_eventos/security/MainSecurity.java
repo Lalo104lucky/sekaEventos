@@ -94,8 +94,9 @@ public class MainSecurity implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(customInterceptor).addPathPatterns("/api/test/secured");
+        registry.addInterceptor(customInterceptor).addPathPatterns("/api/**");
     }
-    
+
+
 
 }
