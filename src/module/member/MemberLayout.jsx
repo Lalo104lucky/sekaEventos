@@ -1,6 +1,7 @@
 import React,{ useEffect, useState } from 'react';
 import NavbarMember from './components/NavbarMember';
 import { Outlet } from 'react-router-dom';
+import { alertaError } from '../../config/context/alert';
 
 const MemberLayout = () => {
 
@@ -14,7 +15,7 @@ const MemberLayout = () => {
         const perfilInfo = parsedData || {};
         setPerfilData(perfilInfo);
       } catch (error) {
-        console.error("Error al parsear datos del usuario:", error);
+        alertaError("Error", "No se pudo cargar los datos del perfil.");
       }
     }
 
@@ -22,10 +23,13 @@ const MemberLayout = () => {
 
   useEffect(() => {
     obtenerDatosLocalStorage();
+    return () => {
+      setPerfilData(null); 
+    }
   }, []);
 
   return (
-    <><div className="w-full pt-24 pb-2 mb-[64px]">
+    <><div className="w-full pt-16 pb-2 mb-[64px]">
       <NavbarMember perfilData={perfilData} />
       <Outlet />
     </div></>

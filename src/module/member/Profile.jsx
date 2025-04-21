@@ -16,7 +16,7 @@ const Profile = () => {
                 const perfilInfo = parsedData || {};
                 setPerfilData(perfilInfo);
             } catch (error) {
-                console.error("Error al parsear datos del usuario:", error);
+                alertaError("Error", "No se pudo cargar los datos del perfil.");
             }
         }
 
@@ -24,6 +24,9 @@ const Profile = () => {
 
     useEffect(() => {
         obtenerDatosLocalStorage();
+        return () => {
+            setPerfilData(null); 
+        }
     }, []);
     const usuarioInfo = perfilData?.usuario || "No hay datos";
     const token = perfilData?.token || "No hay token";
@@ -122,10 +125,7 @@ const Profile = () => {
     const passwordFormSchema = yup.object({
         newPassword: yup
             .string()
-            .matches(
-                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/,
-                "La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, una minúscula, un número y un carácter especial"
-            )
+            .min(8, "La contraseña debe tener al menos 8 caracteres")
             .required("La nueva contraseña es obligatoria"),
         confirmPassword: yup
             .string()
@@ -170,7 +170,6 @@ const Profile = () => {
 
                         alertaExito("Éxito", "Se actualizó correctamente la información del usuario");
                     } catch (error) {
-                        console.error("Error:", error);
                         alertaError("Error", "Error al actualizar la información del usuario");
                     }
                 }
@@ -206,7 +205,6 @@ const Profile = () => {
                         // Limpiar formulario
                         passwordFormik.resetForm();
                     } catch (error) {
-                        console.error("Error:", error);
                         alertaError("Error", "Error al actualizar la contraseña");
                     }
                 }

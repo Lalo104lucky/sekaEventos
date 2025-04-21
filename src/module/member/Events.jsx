@@ -23,6 +23,9 @@ const Events = () => {
 
   useEffect(() => {
     obtenerDatosLocalStorage();
+    return () => {
+      setPerfilData(null); // Limpiar el estado al desmontar el componente
+    }
   }, []);
 
   const idUser  = perfilData?.usuario?.id_usuario || "No hay id";
@@ -80,7 +83,7 @@ const Events = () => {
 
   const carouselSettings = {
     dots: true,
-    infinite: false, // importante para que no repita
+    infinite: false,
     speed: 500,
     slidesToShow: 5,
     slidesToScroll: 1,
@@ -112,13 +115,13 @@ const Events = () => {
   const confirmedEvents = sortByFechaDesc(eventsUser).filter(event => event.estatus === "Próximamente");
 
   return (
-    <div className="m-4 p-5">
+    <div className="m-4 p-4">
       <h2 className="text-2xl font-bold mb-4">Eventos Próximos</h2>
       <div className="relative overflow-hidden w-full">
         {proximosEventos.length > 0 ? (
           <Slider {...carouselSettings}>
             {proximosEventos.map((event, index) => (
-              <div key={index} className="p-2">
+              <div key={index} className="p-2 ml-4 mr-4">
                 <FeaturedEvent
                   event={event}
                   refreshEvents={refreshEvents}

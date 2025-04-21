@@ -30,11 +30,10 @@ const FeaturedEvent = ({ event, idUser, tokenType, token, refreshEvents}) => {
               },
             }
           );
+          setAsistenciaConfirmada(true);
           refreshEvents();
           alertaExito("¡Asistencia confirmada!", "Te has registrado correctamente al evento.");
-          setAsistenciaConfirmada(true);
         } catch (error) {
-          console.error("Error al confirmar asistencia:", error);
           alertaError("Error", "No se pudo confirmar tu asistencia. Inténtalo de nuevo.");
         }
       }

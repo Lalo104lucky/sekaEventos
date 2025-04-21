@@ -43,7 +43,7 @@ function EditEvent({ eventId, onClose }) {
         },
         validationSchema: yup.object({
             titulo: yup.string().max(100, "No debe exceder los 100 caracteres").required("Campo obligatorio"),
-            fecha: yup.date().required("Campo obligatorio"),
+            fecha: yup.date().required("Campo obligatorio").min(new Date(), "La fecha no puede ser anterior al día actual"),
             id_tipoevento: yup.string().required("Selecciona un tipo de evento"),
         }),
         onSubmit: async (values) => {
@@ -156,6 +156,7 @@ function EditEvent({ eventId, onClose }) {
                                     value={formik.values.fecha}
                                     required
                                     className="w-full border border-gray-300 p-2 mb-3 custom-input"
+                                    min={new Date().toISOString().slice(0, 16)}
                                 />
                                 {formik.touched.fecha && formik.errors.fecha && (
                                     <div className="text-red-600 text-sm">{formik.errors.fecha}</div>

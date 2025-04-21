@@ -29,7 +29,7 @@ function Members() {
         setGrupoId(filteredGroup.id_grupo);
       }
     } catch (error) {
-      alertaError("Error", "No se pudo cargar el grupo seleccionado.");
+      alertaError("Error", "No se pudo cargar el grupo.");
     }
   };
 
