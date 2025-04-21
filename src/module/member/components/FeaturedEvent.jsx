@@ -14,6 +14,7 @@ const FeaturedEvent = ({ event, idUser, tokenType, token, refreshEvents}) => {
   ? `http://localhost:8080/api/evento/path/${event.imagen}`
   : "https://s1.significados.com/foto/medio-ambiente-og.jpg";
 
+ 
   const handleConfirmarAsistencia = () => {
     alertaPregunta(
       "¿Confirmar asistencia?",
@@ -21,31 +22,32 @@ const FeaturedEvent = ({ event, idUser, tokenType, token, refreshEvents}) => {
       async () => {
         try {
           alertaCargando("Confirmando asistencia...", "Por favor, espere");
-          const response = await AxiosClient({
-            url: `evento/${event.id_evento}/confirmarAsistencia/${idUser}`,
-            method: "POST",
-            headers: {
-              Authorization: `${tokenType} ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
+          const response = await AxiosClient.post(
+            `evento/${event.id_evento}/confirmarAsistencia/${idUser}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
           refreshEvents();
           alertaExito("¡Asistencia confirmada!", "Te has registrado correctamente al evento.");
           setAsistenciaConfirmada(true);
         } catch (error) {
-          alertaError("Error", "No se pudo confirmar tu asistencia.");
+          console.error("Error al confirmar asistencia:", error);
+          alertaError("Error", "No se pudo confirmar tu asistencia. Inténtalo de nuevo.");
         }
       }
     );
   };
+  
 
   return (
     <div className="h-96 shadow-sm overflow-hidden relative flex flex-col">
             <img className="w-full h-full object-cover" src={imageUrl} alt={event.titulo} />
-            <div className="absolute inset-0 z-40" style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}></div>
-            <div className="absolute inset-0 z-40 bg-black bg-opacity-50"></div>
-
-            <div className="absolute inset-0 flex flex-col justify-between p-4 z-50">
+            <div className="absolute inset-0 z-10" style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}></div>
+            
+            <div className="absolute inset-0 flex flex-col justify-between p-4 z-20">
                 <div>
                     <h5 className="text-2xl font-bold tracking-tight text-white mb-8 h-24 line-clamp-3">
                         {event.titulo}

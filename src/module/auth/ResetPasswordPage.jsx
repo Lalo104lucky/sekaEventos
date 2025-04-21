@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
-import {AxiosClient} from "../../config/http-gateway/http-client";
+import { AxiosClient } from "../../config/http-gateway/http-client";
 import { alertaExito, alertaError } from '../../config/context/alert';
 import FondoLogin from '../../assets/img/fondoLogin.jpg';
 import Logo from '../../assets/img/logo.png';
@@ -18,8 +18,8 @@ const ResetPasswordPage = () => {
     const togglePasswordVisibility2 = () => setShowPassword2(!showPassword2);
 
     const location = useLocation();
-    const { id, token } = location.state || {}; 
-    
+    const { id, token } = location.state || {};
+
 
     const formik = useFormik({
         initialValues: {
@@ -41,11 +41,11 @@ const ResetPasswordPage = () => {
 
                 const payload = {
                     contrasena: values.newPassword,
-                    
+
 
                 };
 
-                const response = await AxiosClient.patch(`/usuario/reset-password/${id}`,{
+                const response = await AxiosClient.patch(`/usuario/reset-password/${id}`, {
                     contrasena: values.newPassword,
                 });
 
@@ -86,17 +86,18 @@ const ResetPasswordPage = () => {
                                 id="token"
                                 name="token"
                                 onChange={(e) => {
-                                    // Acepta solo números y hasta 6 dígitos
-                                    const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                                    const value = e.target.value.replace(/\D/g, '').slice(0, 6); // Acepta solo números y hasta 6 dígitos
                                     formik.setFieldValue('token', value);
-                                  }}
+                                }}
                                 onBlur={formik.handleBlur}
                                 value={formik.values.token}
                                 required
-                                className="w-full border border-gray-300 p-2 mb-3"
+                                className="w-full border border-gray-300 p-2 pr-12 custom-input"
                                 placeholder="Código"
                             />
-                            {formik.touched.token && formik.errors.token && <div className="text-red-600 text-sm">{formik.errors.token}</div>}
+                            {formik.touched.token && formik.errors.token && (
+                                <div className="text-red-600 text-sm">{formik.errors.token}</div>
+                            )}
                         </div>
 
                         <div className="relative mb-2">
@@ -108,11 +109,54 @@ const ResetPasswordPage = () => {
                                 onBlur={formik.handleBlur}
                                 value={formik.values.newPassword}
                                 required
-                                className="w-full border border-gray-300 p-2 mb-3"
+                                className="w-full border border-gray-300 p-2 pr-12 custom-input"
                                 placeholder="Nueva contraseña"
                             />
-                            <button type="button" onClick={togglePasswordVisibility1} className="absolute end-0 px-3 text-gray-500">👁️</button>
-                            {formik.touched.newPassword && formik.errors.newPassword && <div className="text-red-600 text-sm">{formik.errors.newPassword}</div>}
+                            <button
+                                type="button"
+                                onClick={togglePasswordVisibility1}
+                                className="absolute inset-y-0 right-0 flex py-2 px-3 items-center text-gray-500"
+                            >
+                                {showPassword1 ? (
+                                    <svg
+                                        className="w-5 h-5 text-gray-800 dark:text-white"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"
+                                        />
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                                        />
+                                    </svg>
+                                ) : (
+                                    <svg
+                                        className="w-5 h-5 text-gray-800 dark:text-white"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M3.933 13.909A4.357 4.357 0 0 1 3 12c0-1 4-6 9-6m7.6 3.8A5.068 5.068 0 0 1 21 12c0 1-3 6-9 6-.314 0-.62-.014-.918-.04M5 19 19 5m-4 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                                        />
+                                    </svg>
+                                )}
+                            </button>
+                            {formik.touched.newPassword && formik.errors.newPassword && (
+                                <div className="text-red-600 text-sm">{formik.errors.newPassword}</div>
+                            )}
                         </div>
 
                         <div className="relative mb-2">
@@ -124,11 +168,54 @@ const ResetPasswordPage = () => {
                                 onBlur={formik.handleBlur}
                                 value={formik.values.confirmPassword}
                                 required
-                                className="w-full border border-gray-300 p-2 mb-3"
+                                className="w-full border border-gray-300 p-2 pr-12 custom-input"
                                 placeholder="Confirmar Contraseña"
                             />
-                            <button type="button" onClick={togglePasswordVisibility2} className="absolute end-0 px-3 text-gray-500">👁️</button>
-                            {formik.touched.confirmPassword && formik.errors.confirmPassword && <div className="text-red-600 text-sm">{formik.errors.confirmPassword}</div>}
+                            <button
+                                type="button"
+                                onClick={togglePasswordVisibility2}
+                                className="absolute inset-y-0 right-0 flex py-2 px-3 items-center text-gray-500"
+                            >
+                                {showPassword2 ? (
+                                    <svg
+                                        className="w-5 h-5 text-gray-800 dark:text-white"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"
+                                        />
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                                        />
+                                    </svg>
+                                ) : (
+                                    <svg
+                                        className="w-5 h-5 text-gray-800 dark:text-white"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M3.933 13.909A4.357 4.357 0 0 1 3 12c0-1 4-6 9-6m7.6 3.8A5.068 5.068 0 0 1 21 12c0 1-3 6-9 6-.314 0-.62-.014-.918-.04M5 19 19 5m-4 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                                        />
+                                    </svg>
+                                )}
+                            </button>
+                            {formik.touched.confirmPassword && formik.errors.confirmPassword && (
+                                <div className="text-red-600 text-sm">{formik.errors.confirmPassword}</div>
+                            )}
                         </div>
 
                         <button

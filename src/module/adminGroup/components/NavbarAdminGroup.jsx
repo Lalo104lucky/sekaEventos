@@ -22,6 +22,11 @@ const NavbarAdminGroup = () => {
 
   const user = getUserFromLocalStorage();
 
+  const handleNavigation = (path) => {
+    setEvents([]);
+    navigate(path);
+  };
+
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
@@ -31,7 +36,8 @@ const NavbarAdminGroup = () => {
     sessionStorage.removeItem("user");
     dispatch({ type: "SIGNOUT" });
     navigate("/");
-
+    setIsDropdownOpen(false);
+    setShowProfileModal(false);
   };
 
   const handleOpenProfileModal = () => {
@@ -45,22 +51,22 @@ const NavbarAdminGroup = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
-      }
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            setIsDropdownOpen(false);
+        }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+        document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+}, []);
 
   return (
     <>
       <nav className="bg_dark_forest border-gray-200 text-white py-4 px-4 flex justify-between items-center fixed w-full top-0 z-10">
         <div className="flex items-center space-x-3">
-          <NavLink to="/" className="flex items-center space-x-3">
+          <NavLink to="/" className="flex items-center space-x-3" onClick={() => handleNavigation("/")}>
             <img
               src={Logo}
               alt="Logo"
@@ -74,6 +80,7 @@ const NavbarAdminGroup = () => {
           <li>
             <NavLink
               to="/"
+              onClick={() => handleNavigation("/")}
               className={({ isActive }) =>
                 isActive
                   ? "text-white font-semibold border-b-2 border-white pb-1"
@@ -86,6 +93,7 @@ const NavbarAdminGroup = () => {
           <li>
             <NavLink
               to="/miembros"
+              onClick={() => handleNavigation("/miembros")}
               className={({ isActive }) =>
                 isActive
                   ? "text-white font-semibold border-b-2 border-white pb-1"

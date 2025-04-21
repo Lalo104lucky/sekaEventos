@@ -13,6 +13,7 @@ function Members() {
   const [grupoId, setGrupoId] = useState(null);
   const [showEditMemberModal, setShowEditMemberModal] = useState(false);
   const [selectedMemberId, setSelectedMemberId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
 
   const fetchGrupoId = async () => {
@@ -33,6 +34,7 @@ function Members() {
   };
 
   const fetchMembers = async () => {
+    setLoading(true);
     try {
       const user = JSON.parse(localStorage.getItem("user"));
       const adminGroupId = user?.usuario?.id_usuario;
@@ -46,6 +48,8 @@ function Members() {
       setMembers(filteredMembers);
     } catch (error) {
       alertaError("Error", "No se pudo cargar los miembros.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -75,6 +79,10 @@ function Members() {
   useEffect(() => {
     fetchGrupoId();
     fetchMembers();
+    return () => {
+      setMembers([]);
+      setGrupoId(null);
+    }
   }, []);
 
   return (

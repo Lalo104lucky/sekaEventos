@@ -2,10 +2,10 @@ import React from "react";
 import NavbarAdmin from "./components/NavbarAdmin";
 import { Outlet } from "react-router-dom";
 
-function AdminLayout() {
+function AdminLayout({ setLoading }) {
   return (
     <>
-      <NavbarAdmin/>
+      <NavbarAdmin setLoading={setLoading}/>
       <main className="pt-16">
         <section>
           <Outlet/>

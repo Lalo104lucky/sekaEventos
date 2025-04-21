@@ -158,6 +158,12 @@ const AdminGroups = () => {
 
       useEffect(()=>{
         getAdminGroups()
+        return () => {
+          setData([]);
+          setGroups([]);
+          setIsModalOpen(false);
+          setIsModalEditOpen(false);
+        }
       }, [])
 
   return (

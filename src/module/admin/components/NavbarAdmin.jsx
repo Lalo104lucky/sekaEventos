@@ -4,63 +4,75 @@ import Logo from '../../../assets/img/Logo.png';
 import AuthContext from "../../../config/context/auth-context";
 import ProfileModal from './ProfileModalAdmin';
 
-const NavbarAdmin = () => {
-    const navigate = useNavigate();
-    const { dispatch } = useContext(AuthContext);
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [showProfileModal, setShowProfileModal] = useState(false);
-    const dropdownRef = useRef(null);
+const NavbarAdmin = ({ setLoading }) => {
+  const navigate = useNavigate();
+  const { dispatch } = useContext(AuthContext);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const dropdownRef = useRef(null);
 
-    const toggleDropdown = () => {
-        setIsDropdownOpen(!isDropdownOpen);
+  const handleNavigation = (path) => {
+    setBitacora([]);
+    navigate(path);
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  }
+
+  const handleLogout = async () => {
+    setLoading(true);
+    setTimeout(() => {
+      localStorage.removeItem("user");
+      sessionStorage.removeItem("user");
+      dispatch({ type: "SIGNOUT" });
+      navigate("/");
+      setIsDropdownOpen(false);
+      setShowProfileModal(false);
+      
+      setLoading(false);
+  }, 500);
+  }
+
+  const getUserFromLocalStorage = () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      return user || null;
+    } catch (error) {
+      return null;
     }
+  };
 
-    const handleLogout = () => {
-        localStorage.removeItem("user");
-        sessionStorage.removeItem("user");
-        dispatch({ type: "SIGNOUT" });
-        navigate("/");
-    }
+  const handleOpenProfileModal = () => {
+    setShowProfileModal(true);
+    setIsDropdownOpen(false);
+  }
 
-    const getUserFromLocalStorage = () => {
-      try {
-        const user = JSON.parse(localStorage.getItem("user"));
-        return user || null; 
-      } catch (error) {
-        return null; 
+  const handleCloseProfileModal = () => {
+    setShowProfileModal(false);
+  }
+
+
+  const user = getUserFromLocalStorage();
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
       }
     };
 
-    const handleOpenProfileModal = () => {
-      setShowProfileModal(true);
-      setIsDropdownOpen(false);
-    }
-  
-    const handleCloseProfileModal = () => {
-      setShowProfileModal(false);
-    }
-  
-
-    const user = getUserFromLocalStorage();
-
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-          if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-            setIsDropdownOpen(false);
-          }
-        };
-    
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-          document.removeEventListener("mousedown", handleClickOutside);
-        };
-      }, []);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <>
-       <nav className="bg_dark_forest border-gray-200 text-white py-4 px-6 flex justify-between items-center fixed w-full top-0 z-10">
+      <nav className="bg_dark_forest border-gray-200 text-white py-4 px-6 flex justify-between items-center fixed w-full top-0 z-10">
         <div className="flex items-center space-x-3">
-          <NavLink to="/" className="flex items-center space-x-3">
+          <NavLink to="/" className="flex items-center space-x-3" onClick={() => handleNavigation("/")}>
             <img
               src={Logo}
               alt="Logo"
@@ -69,11 +81,12 @@ const NavbarAdmin = () => {
             <span className="font-poppins font-bold text-3xl text-white title">SEKA</span>
           </NavLink>
         </div>
-  
+
         <ul className="flex space-x-8 text-lg">
           <li>
             <NavLink
               to="/"
+              onClick={() => handleNavigation("/")}
               className={({ isActive }) =>
                 isActive
                   ? "text-white font-semibold border-b-2 border-white pb-1"
@@ -86,6 +99,7 @@ const NavbarAdmin = () => {
           <li>
             <NavLink
               to="/grupos"
+              onClick={() => handleNavigation("/grupos")}
               className={({ isActive }) =>
                 isActive
                   ? "text-white font-semibold border-b-2 border-white pb-1"
@@ -98,6 +112,7 @@ const NavbarAdmin = () => {
           <li>
             <NavLink
               to="/admingroups"
+              onClick={() => handleNavigation("/admingroups")}
               className={({ isActive }) =>
                 isActive
                   ? "text-white font-semibold border-b-2 border-white pb-1"
@@ -107,8 +122,21 @@ const NavbarAdmin = () => {
               Administradores
             </NavLink>
           </li>
+          <li>
+            <NavLink
+              to="/bitacora"
+              onClick={() => handleNavigation("/bitacora")}
+              className={({ isActive }) =>
+                isActive
+                  ? "text-white font-semibold border-b-2 border-white pb-1"
+                  : "text-gray-300 hover:text-white transition"
+              }
+            >
+              Bitácora
+            </NavLink>
+          </li>
         </ul>
-  
+
         <div className="relative" ref={dropdownRef}>
           <button
             className="text-white font-medium rounded-lg text-sm text-center inline-flex items-center transition space-x-2"
@@ -149,11 +177,10 @@ const NavbarAdmin = () => {
               />
             </svg>
           </button>
-  
+
           <div
-            className={`z-20 ${
-              isDropdownOpen ? "block" : "hidden"
-            } absolute right-0 mt-2 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700`}
+            className={`z-20 ${isDropdownOpen ? "block" : "hidden"
+              } absolute right-0 mt-2 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700`}
           >
             <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
               <li>
@@ -181,7 +208,7 @@ const NavbarAdmin = () => {
           user={user}
           onClose={handleCloseProfileModal}
         />
-      )} 
+      )}
     </>
   )
 }

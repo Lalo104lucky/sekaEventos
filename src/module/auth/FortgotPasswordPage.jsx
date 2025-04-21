@@ -24,20 +24,26 @@ const ForgotPasswordPage = () => {
     onSubmit: async (values, { setSubmitting }) => {
       setLoading(true);
       try {
+        console.log("Enviando correo a:", values.destinatario);
         const response = await AxiosClient.post('/send-email', {
           destinatario: values.destinatario,
           asunto: "Recuperar contraseña",
         });
-        
+        console.log(response);
+
         if (!response?.data?.error) {
-          alertaExito("Correo enviado", "Revisa tu bandeja de entrada para continuar con el restablecimiento de contraseña.");
+          alertaExito("Correo enviado", "Se ha enviado un correo electrónico para restablecer tu contraseña. Revisa tu bandeja de entrada o el spam.");
           navigate('/reset-password/', { state: { id: response.data.id_usuario, token: response.data.email.pin } });
-          
+
         } else {
           throw new Error(response.data.message);
         }
       } catch (error) {
-      alertaError("Restablecer contraseña", "Ocurrió un error al enviar el correo electrónico");
+        if (error.response?.status === 404) {
+          alertaError("Correo no encontrado", "No se encontró el correo electrónico proporcionado.");
+        } else {
+          alertaError("Restablecer contraseña", "Ocurrió un error al enviar el correo electrónico.");
+        }
       } finally {
         setLoading(false);
         setSubmitting(false);
@@ -65,10 +71,6 @@ const ForgotPasswordPage = () => {
           </h3>
           <form className="space-y-4 w-full" noValidate onSubmit={formik.handleSubmit}>
             <div className="relative mb-2">
-              <label className="block mb-2 text-sm font-medium text-gray-900">Correo Electrónico:</label>
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <img src="" alt="icono correo" className="w-5 h-5" />
-              </div>
               <input
                 type="email"
                 id="destinatario"
@@ -78,8 +80,8 @@ const ForgotPasswordPage = () => {
                 value={formik.values.destinatario}
                 autoComplete="email"
                 required
-                className="w-full border border-gray-300 p-2 pl-10 rounded-lg"
-                placeholder="name@example.com"
+                className="w-full border border-gray-300 p-2 mb-3 custom-input"
+                placeholder="Correo Electrónico"
               />
               {formik.touched.destinatario && formik.errors.destinatario && (
                 <div className="text-red-600 text-sm">{formik.errors.destinatario}</div>
@@ -93,14 +95,11 @@ const ForgotPasswordPage = () => {
             >
               {loading ? "Enviando..." : "Enviar"}
             </button>
-            <p className="text-sm text-gray-500 cursor-pointer text-right w-full" onClick={() => navigate("/reset-password")}>
-              Siguiente pantalla
-            </p>
           </form>
 
           <div className="text-center mt-5">
             <a
-              className="text-blue-600 text-base cursor-pointer hover:underline"
+              className="text-gray-800 text-base cursor-pointer hover:underline"
               onClick={() => navigate("/")}
             >
               <p>¿Ya recordaste tu contraseña?</p>

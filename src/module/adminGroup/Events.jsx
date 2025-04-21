@@ -81,6 +81,10 @@ function Events() {
     useEffect(() => {
         fetchEvents();
         fetchCategoryOptions();
+        return () => {
+            setEvents([]);
+            setCategoryOptions([]);
+        };
     }, []);
 
 

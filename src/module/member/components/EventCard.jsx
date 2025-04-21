@@ -12,7 +12,7 @@ const EventCard = ({ event, idUser, tokenType, token , refreshEvents}) => {
 
   const imageUrl = event.imagen
   ? `http://localhost:8080/api/evento/path/${event.imagen}`
-  : "https://s1.significados.com/foto/medio-ambiente-og.jpg";
+  : "https://pensamientoamplio.net/wp-content/uploads/naturaleza-y-medio-ambiente-9.jpg";
    const [asistenciaConfirmada, setAsistenciaConfirmada] = useState(true); 
 
   const handleCancelarAsistencia = () => {
@@ -22,25 +22,19 @@ const EventCard = ({ event, idUser, tokenType, token , refreshEvents}) => {
       async () => {
         try {
           alertaCargando("Cancelando asistencia...", "Por favor, espere");
-
-          const response = await AxiosClient({
-            url: `evento/${event.id_evento}/cancelarAsistencia/${idUser}`,
-            method: "POST",
-            headers: {
-              Authorization: `${tokenType} ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
+          const response = await AxiosClient.post(`evento/${event.id_evento}/cancelarAsistencia/${idUser}`);
           refreshEvents();
           alertaExito("¡Asistencia cancelada!", "Se ha cancelado tu asistencia al evento.");
           setAsistenciaConfirmada(false);
         } catch (error) {
-          alertaError("Error", "No se pudo cancelar tu asistencia.");
+          console.error("Error al cancelar asistencia:", error);
+          alertaError("Error", "No se pudo cancelar tu asistencia. Inténtalo de nuevo.");
         }
       }
     );
   };
 
+  // 🎨 Determinar colores según estatus
   const getEstatusColor = (estatus) => {
     switch (estatus) {
       case "En Ejecución":
@@ -49,7 +43,7 @@ const EventCard = ({ event, idUser, tokenType, token , refreshEvents}) => {
         return { text: "text-red-700", bg: "bg-red-700" };
       case "Próximamente":
       default:
-        return { text: "text-black", bg: "bg-black" };
+        return { text: "text-yellow-600", bg: "bg-yellow-600" };
     }
   };
 

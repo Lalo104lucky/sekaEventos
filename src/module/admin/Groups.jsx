@@ -97,6 +97,10 @@ const Groups = () => {
   useEffect(() => {
     getGroups();
     getAdministrators();
+    return () => {
+      setGroups([]);
+      setAdministrators([]);
+    }
   }, []);
 
   return (
