@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import TableGroups from './components/TableGroups';
 import { AxiosClient } from '../../config/http-gateway/http-client';
-import { FaUsers, FaMapMarkerAlt, FaLocationArrow } from 'react-icons/fa';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { alertaExito, alertaError, alertaCargando, alertaPregunta } from '../../config/context/alert';
@@ -68,9 +67,7 @@ const Groups = () => {
     onSubmit: async (values) => {
         alertaPregunta(
             isModalMemberOpen ? "Crear Grupo" : "Editar Grupo",
-            isModalMemberOpen
-                ? `¿Estás seguro de que deseas crear el grupo "${values.nombre}"?`
-                : `¿Estás seguro de que deseas actualizar el grupo "${values.nombre}"?`,
+            "¿Deseas guardar los cambios?",
             async () => {
                 try {
                     alertaCargando("Cargando", "Guardando los datos...");
@@ -86,7 +83,12 @@ const Groups = () => {
                     getGroups();
                 } catch (error) {
                     console.error('Error guardando grupo:', error);
-                    alertaError("Error", "Algo salió mal al guardar el grupo");
+                    if (error.response.status === 400) {
+                        alertaError("Error", "El Administrador ya tiene un grupo asignado");
+                    }
+                    if (error.response.status !== 400) {
+                      alertaError("Error", "Algo salió mal al guardar el grupo");
+                    }
                 }
             },
             () => {
@@ -106,10 +108,10 @@ const Groups = () => {
       <div className='flex justify-between mt-6 mb-4 px-8 py-3'>
         <h2 className='text-2xl font-bold'>Grupos</h2>
         <button
-          className='bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition'
+            className='bg_dark_forest text-white px-4 py-2 rounded-lg hover:bg_dark_forest transition flex items-center space-x-2'
           onClick={handleModal}
         >
-          Crear Nuevo Grupo
+          <i className="pi pi-plus mr-2"></i> Nuevo Grupo
         </button>
       </div>
       <TableGroups
@@ -213,7 +215,7 @@ const Groups = () => {
                     value={formik.values.id_usuario}
                     required
                     className="w-full border border-gray-300 p-2 mb-3 custom-input"
-                    disabled={isModalMemberEdit} 
+                    placeholder="Seleccionar Administrador"
                   >
                     <option value="">Seleccionar Administrador</option>
                     {administrators.map((admin) => (

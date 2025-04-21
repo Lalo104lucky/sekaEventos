@@ -55,7 +55,7 @@ function EventsAdmin() {
         onSubmit: async (values) => {
             alertaPregunta(
                 "Crear Tipo de Evento",
-                `¿Estás seguro de que deseas crear el tipo de evento "${values.nombre}"?`,
+                `¿Deseas guardar los cambios?`,
                 async () => {
                     try {
                         alertaCargando("Cargando", "Guardando los datos");
@@ -66,6 +66,7 @@ function EventsAdmin() {
                     } finally {
                         handleModalCategory();
                         await getCategories();
+                        setShouldFetch(true);
                     }
                 },
                 () => {
@@ -86,7 +87,7 @@ function EventsAdmin() {
         onSubmit: async (values) => {
             alertaPregunta(
                 "Actualizar Tipo de Evento",
-                `¿Estás seguro de que deseas actualizar el tipo de evento a "${values.nombre}"?`,
+                `¿Deseas guardar los cambios?`,
                 async () => {
                     try {
                         alertaCargando("Cargando", "Guardando los datos");
@@ -112,7 +113,7 @@ function EventsAdmin() {
     const eliminarTipoEvento = (event) => {
         alertaPregunta(
             "Eliminar Tipo de Evento",
-            `¿Estás seguro de que deseas eliminar el tipo de evento "${event.nombre}"?`,
+            `¿Deseas eliminar el tipo de evento?`,
             async () => {
                 try {
                     alertaCargando("Cargando", "Eliminando el tipo de evento...");
@@ -120,7 +121,6 @@ function EventsAdmin() {
                     alertaExito("Éxito", "El tipo de evento se eliminó correctamente");
                     await getCategories();
                 } catch (error) {
-                    console.error("Error al eliminar el tipo de evento:", error.response || error.message);
                     alertaError("Error", "Algo salió mal al eliminar el tipo de evento");
                 }
             },
@@ -148,7 +148,6 @@ function EventsAdmin() {
                 label: tipo.nombre,
                 value: tipo.nombre,
             }));
-            console.log(categories)
             setCategory(categories);
         }catch(error){
             console.error('Error fetching events:', error);
@@ -212,7 +211,7 @@ function EventsAdmin() {
                 className='bg_dark_forest text-white px-4 py-2 rounded-lg hover:bg_dark_forest transition'
                 onClick={handleModalCategory}
             >
-                Crear Nuevo Tipo de Evento
+                <i className="pi pi-plus mr-2"></i>Tipo de Evento
             </button>
         </div>
         {

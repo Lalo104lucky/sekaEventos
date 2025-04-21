@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import TableAdminGroups from './components/TableAdminGroups';
 import { AxiosClient } from '../../config/http-gateway/http-client';
-import { FaUser, FaEnvelope, FaPhone, FaUsers } from 'react-icons/fa';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { alertaExito, alertaError, alertaCargando, alertaPregunta } from '../../config/context/alert';
@@ -12,11 +11,11 @@ const AdminGroups = () => {
   const [groups, setGroups] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
-  const [isModalGroup, setisModalGroup] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);  
 
   const getAdminGroups = async () => {
     try{
-      // Realiza las peticiones para obtener administradores y grupos
     const [adminsResponse, groupsResponse] = await Promise.all([
       AxiosClient.get('/usuario/'),
       AxiosClient.get('/grupo/')
@@ -25,11 +24,8 @@ const AdminGroups = () => {
     const admins = adminsResponse.data.filter(admin => admin.rol.rol === "ADMIN_GROUP");
     const groups = groupsResponse.data;
 
-    // Combina los datos de administradores y grupos
     const adminGroups = admins.map(admin => {
-      // Busca si el administrador está asociado a un grupo
       const group = groups.find(group => group.usuario?.id_usuario === admin.id_usuario);
-
       return {
         ...admin,
         grupo: group ? group.nombre : "Sin grupo"
@@ -90,7 +86,7 @@ const AdminGroups = () => {
       onSubmit: async (values) => {
           alertaPregunta(
               "Crear Administrador",
-              `¿Estás seguro de que deseas crear el administrador "${values.usuario}"?`,
+              `¿Deseas guardar los cambios?`,
               async () => {
                   try {
                       alertaCargando("Cargando", "Guardando los datos...");
@@ -140,7 +136,7 @@ const AdminGroups = () => {
       onSubmit: async (values) => {
           alertaPregunta(
               "Editar Administrador",
-              `¿Estás seguro de que deseas actualizar el administrador "${values.usuario}"?`,
+              `¿Deseas guardar los cambios?`,
               async () => {
                   try {
                       alertaCargando("Cargando", "Guardando los datos...");
@@ -178,10 +174,10 @@ const AdminGroups = () => {
       <div className='flex justify-between mt-6 mb-4 px-8 py-3'>
         <h2 className='text-2xl font-bold'>Administradores de Grupos</h2>
         <button 
-          className='bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition'
+          className='bg_dark_forest text-white px-4 py-2 rounded-lg hover:bg_dark_forest transition flex items-center space-x-2'
           onClick={handleAddModal}
         >
-            Crear Nuevo Administrador de Grupo
+            <i className="pi pi-plus mr-2"></i> Administrador de Grupo
         </button>
       </div>
       <TableAdminGroups administradores={data} editAdmin={handleEditModal} grupos={groups}/>
@@ -328,41 +324,106 @@ const AdminGroups = () => {
 
                 <div className="relative mb-2">
                   <label className="block mb-2 text-sm font-poppins text-gray-900">Contraseña:</label>
-                  <input
-                    type="password"
-                    id="contraseña"
-                    name="contraseña"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.contraseña}
-                    required
-                    className="w-full border border-gray-300 p-2 mb-3 custom-input"
-                    placeholder="Contraseña"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      id="contraseña"
+                      name="contraseña"
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.contraseña}
+                      required
+                      className="w-full border border-gray-300 p-2 pr-12 custom-input"
+                      placeholder="Contraseña"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500"
+                    >
+                      {showPassword ? (
+                        <svg
+                            className="w-6 h-6 text-gray-800 dark:text-white"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"
+                            />
+                            <path
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                            />
+                        </svg>
+                      ) : (
+                        <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.933 13.909A4.357 4.357 0 0 1 3 12c0-1 4-6 9-6m7.6 3.8A5.068 5.068 0 0 1 21 12c0 1-3 6-9 6-.314 0-.62-.014-.918-.04M5 19 19 5m-4 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
                   {formik.touched.contraseña && formik.errors.contraseña && (
                     <div className="text-red-600 text-sm">{formik.errors.contraseña}</div>
                   )}
                 </div>
-
                 <div className="relative mb-2">
                   <label className="block mb-2 text-sm font-poppins text-gray-900">Confirmar Contraseña:</label>
-                  <input
-                    type="password"
-                    id="confirmarContraseña"
-                    name="confirmarContraseña"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.confirmarContraseña}
-                    required
-                    className="w-full border border-gray-300 p-2 mb-3 custom-input"
-                    placeholder="Confirmar Contraseña"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      id="confirmarContraseña"
+                      name="confirmarContraseña"
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.confirmarContraseña}
+                      required
+                      className="w-full border border-gray-300 p-2 pr-12 custom-input"
+                      placeholder="Confirmar Contraseña"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500"
+                    >
+                      {showConfirmPassword ? (
+                      <svg
+                      className="w-6 h-6 text-gray-800 dark:text-white"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                  >
+                      <path
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"
+                      />
+                      <path
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                      />
+                  </svg>
+                      ) : (
+                        <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.933 13.909A4.357 4.357 0 0 1 3 12c0-1 4-6 9-6m7.6 3.8A5.068 5.068 0 0 1 21 12c0 1-3 6-9 6-.314 0-.62-.014-.918-.04M5 19 19 5m-4 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                                    </svg>
+                      )}
+                    </button>
+                  </div>
                   {formik.touched.confirmarContraseña && formik.errors.confirmarContraseña && (
                     <div className="text-red-600 text-sm">{formik.errors.confirmarContraseña}</div>
                   )}
                 </div>
-
-
                 <div className="flex justify-between items-center mt-4">
                   <button
                     type="button"
@@ -544,43 +605,6 @@ const AdminGroups = () => {
               </div>
             
             
-          </div>
-        </div>
-      )}
-      {isModalGroup && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-        }}>
-          <div className="relative bg-white rounded-lg shadow-lg dark:bg-gray-900 w-full max-w-md mx-auto" style={{
-            maxHeight: '80vh',
-            overflowY: 'auto',
-          }}>
-            <div className="px-6 py-4">
-              <div className="flex justify-end">
-                <button
-                  onClick={() => setisModalGroup(false)}
-                  type="button"
-                  className="text-sm font-medium text-gray-900 rounded-lg"
-                >
-                  <svg
-                    className="w-6 h-6 text-gray-800 dark:text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-
-              <h1 className="font-semibold text-xl text-start font-poppins text-black mb-6">
-                Crear Administrador
-              </h1>
-
-              
-            </div>
           </div>
         </div>
       )}
