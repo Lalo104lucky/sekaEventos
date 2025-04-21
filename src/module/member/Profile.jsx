@@ -5,7 +5,26 @@ import * as yup from 'yup';
 import { AxiosClient } from '../../config/http-gateway/http-client';
 import { alertaExito, alertaError, alertaCargando, alertaPregunta } from '../../config/context/alert';
 
-const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
+const Profile = () => {
+    const [perfilData, setPerfilData] = useState(null);
+
+    const obtenerDatosLocalStorage = () => {
+        const userData = localStorage.getItem('user');
+        if (userData) {
+            try {
+                const parsedData = JSON.parse(userData);
+                const perfilInfo = parsedData || {};
+                setPerfilData(perfilInfo);
+            } catch (error) {
+                console.error("Error al parsear datos del usuario:", error);
+            }
+        }
+
+    }
+
+    useEffect(() => {
+        obtenerDatosLocalStorage();
+    }, []);
     const usuarioInfo = perfilData?.usuario || "No hay datos";
     const token = perfilData?.token || "No hay token";
     const tokenType = perfilData?.tokenType || "No hay tokenType";
@@ -13,6 +32,7 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
     const usuario = perfilData?.usuario?.usuario || "no hay id ";
     const idRol = perfilData?.usuario?.rol?.id_rol || "no hay datos";
     const idGrupo = perfilData?.usuario?.grupo?.id_grupo || "no hay datos";
+
 
     const [showPassword, setShowPassword] = useState({
         newPassword: false,
@@ -33,21 +53,21 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
         }
     }
     const styles = {
-        container: "grid grid-cols-3 gap-4 w-full h-screen p-8 overflow-hidden",
+        container: "grid grid-cols-3 gap-4 w-full h-full p-8 overflow-hidden mb-[64px]",
         panel: "border-sage color-dark p-4 flex flex-col justify-center items-center space-y-2 h-[30%]",
         divider: "line-sage w-full h-1",
         sectionTitle: "text-xl mb-2 font-medium",
         inputContainer: "relative",
         inputIcon: "absolute w-8 h-10 text-[#001C0E] items-center ps-2",
         inputField: "colorInput text-sm rounded-lg block w-full pl-10 mb-3",
-        passwordField: "colorInput text-sm rounded-lg block w-full pl-10 mb-3 pr-10", 
-        passwordToggleBtn: "absolute inset-y-0 right-0 flex items-center justify-center px-2", 
+        passwordField: "colorInput text-sm rounded-lg block w-full pl-10 mb-3 pr-10",
+        passwordToggleBtn: "absolute inset-y-0 right-0 flex items-center justify-center px-2",
         cancelButton: "w-1/3 cancelButton border-2 font-medium rounded-lg text-sm px-5 py-2.5",
         submitButton: "w-1/3 styleButton font-medium rounded-lg text-sm px-5 py-2.5",
         formButtonContainer: "flex justify-end space-x-2 mt-4",
         inputLabel: "block mb-2 text-sm font-medium"
     };
-    
+
     // Esquema de validación para información personal
     const userFormSchema = yup.object({
         nombre: yup
@@ -144,21 +164,8 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
                             correo: values.correo,
                             id_rol: idRol,
                         };
-                        console.log("datos enviados ", payload);
-
-                        const response = await AxiosClient({
-                            url: `usuario/${idUsuario}`,
-                            method: "PUT",
-                            data: payload,
-                            headers: {
-                                Authorization: `${tokenType} ${token}`,
-                                "Content-Type": "application/json",
-                            },
-                        });
-
-                        console.log("Response:", response.data);
+                        const response = await AxiosClient.put(`usuario/${idUsuario}`,payload);
                         const data = response.data;
-                        console.log(data);
                         actualizarInformacionLocalStorage(data);
 
                         alertaExito("Éxito", "Se actualizó correctamente la información del usuario");
@@ -191,13 +198,8 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
                             contrasena: values.newPassword,
                         };
 
-                        const response = await AxiosClient({
-                            url: `usuario/changeContra/${idUsuario}`,
-                            method: "PATCH",
-                            data: payload,
-                        });
 
-                        console.log("Response:", response.data);
+                        const response = await AxiosClient.patch(`usuario/changeContra/${idUsuario}`,payload);
 
                         alertaExito("Éxito", "Se actualizó correctamente la contraseña");
 
@@ -261,7 +263,7 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
                     <svg className="w-16 h-16 mt-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.948 8.948 0 0 0 12 21Zm3-11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                     </svg>
-                    <p className="text-2xl font-medium">{usuarioInfo?.grupo?.usuario?.nombre} {usuarioInfo?.grupo?.usuario?.apellido_m}</p>
+                    <p className="text-2xl font-medium text-center">{usuarioInfo?.grupo?.usuario?.nombre} {usuarioInfo?.grupo?.usuario?.apellido_m}</p>
                     <p className="text-sm font-regular">{usuarioInfo?.grupo?.usuario?.correo}</p>
                 </div>
             </div>
@@ -273,7 +275,7 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
                 <p className="text-sm mb-2 font-regular">Actualizar tu información personal</p>
 
                 <form onSubmit={userFormik.handleSubmit} id='formUpdateUser' className="flex-grow overflow-hidden">
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
                         <div className={styles.inputContainer}>
                             <label className={styles.inputLabel}>Usuario:</label>
                             <svg className={styles.inputIcon} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -323,9 +325,7 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
                                 <div className="text-red-600 text-sm">{userFormik.errors.apellido_p}</div>
                             ) : null}
                         </div>
-                    </div>
 
-                    <div className="grid grid-cols-3 gap-4 mt-4">
                         <div className={styles.inputContainer}>
                             <label className={styles.inputLabel}>Apellido Materno:</label>
                             <svg className={styles.inputIcon} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -378,6 +378,7 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
                                 <div className="text-red-600 text-sm">{userFormik.errors.telefono}</div>
                             ) : null}
                         </div>
+
                     </div>
 
                     <div className={styles.formButtonContainer}>
@@ -400,7 +401,7 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
                 <p className={styles.sectionTitle}>Cambiar Contraseña</p>
 
                 <form onSubmit={passwordFormik.handleSubmit} action="#" method="post" id="formUpdatePassword">
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
                         <div className={styles.inputContainer}>
                             <label className={styles.inputLabel}>Nueva Contraseña:</label>
                             <svg className={styles.inputIcon} aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">

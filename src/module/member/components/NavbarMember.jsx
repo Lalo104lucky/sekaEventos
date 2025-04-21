@@ -19,12 +19,11 @@ const NavbarMember = ({ perfilData }) => {
     dispatch({ type: "SIGNOUT" });
     navigate("/");
 }
-console.log("datos en el navbar: ",perfilData)
   const nombreUsuario = perfilData?.usuario?.nombre || "Usuario";
-
+  const Apellido=perfilData?.usuario?.apellido_p || "Usuario"
   return (
     <>
-      <nav className="bg_dark_forest border-gray-200 text-white py-4 px-4 flex justify-between items-center fixed w-full top-0 z-10">
+      <nav className="bg_dark_forest border-gray-200 text-white py-4 px-4 flex justify-between items-center fixed w-full top-0 z-50">
         <div className="w-full flex justify-between items-center mx-auto px-4 ">
           <div className="flex items-center space-x-6">
             <a href="#" className="flex items-center space-x-3 rtl:space-x-reverse">
@@ -60,7 +59,7 @@ console.log("datos en el navbar: ",perfilData)
                 aria-haspopup="true"
               >
                 <span className="material-symbols-outlined mr-2">account_circle</span>
-                {nombreUsuario}
+                {perfilData?.usuario?.nombre} {perfilData?.usuario?.apellido_p}
                 <svg className="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                   <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
                 </svg>

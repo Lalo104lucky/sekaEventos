@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import AdminLayout from "../module/admin/AdminLayout";
 import AdminGroupLayout from '../module/adminGroup/AdminGroupLayout';
@@ -22,29 +22,6 @@ import ProfileMember from '../module/member/Profile';
 const AppRouter = () => {
     const { user } = useContext(AuthContext);
     const [loading, setLoading] = useState(false);;
-
-    const [perfilData, setPerfilData] = useState(null);
-    
-    const obtenerDatosLocalStorage=()=>{
-        const userData = localStorage.getItem('user');
-        if (userData) {
-            try {
-                const parsedData = JSON.parse(userData);
-                const perfilInfo = parsedData|| {};
-                setPerfilData(perfilInfo);
-                console.log("funcion ejecutada")
-            } catch (error) {
-                console.error("Error al parsear datos del usuario:", error);
-            }
-        }
-
-    }
-    
-    useEffect(() => {
-        console.log("funcion ejecutada")
-        obtenerDatosLocalStorage();
-    }, []);
-
 
     const getRole = () => {
         if (user?.usuario?.rol.rol === "ADMIN") {
@@ -94,11 +71,11 @@ const AppRouter = () => {
                             ) : (
                                 <Route path="/" element={
                                     <ProtectedRoute isAllowed={role === "USER"}>
-                                        <MemberLayout />
+                                        <MemberLayout/>
                                     </ProtectedRoute>
                                 }>
-                                     <Route index path="/" element={<EventsMember setLoading={setLoading}/>} />
-                                     <Route path="/perfil-miembro" element={<ProfileMember setLoading={setLoading} perfilData={perfilData} obtenerDatosLocalStorage={obtenerDatosLocalStorage}/>} />
+                                     <Route index path="/" element={<EventsMember setLoading={setLoading} />} />
+                                     <Route path="/perfil-miembro" element={<ProfileMember setLoading={setLoading}/>} />
                                 </Route>
                             )}
                             <Route path="*" element={<Page404 />} />

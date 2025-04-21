@@ -6,33 +6,43 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { AxiosClient } from '../../config/http-gateway/http-client';
 
-const Events = ({ perfilData }) => {
-  const idUser = perfilData?.usuario?.id_usuario || "No hay id";
-  const token = perfilData?.token || "No hay token";
-  const tokenType = perfilData?.tokenType || "No hay tokenType";
+const Events = () => {
+  const [perfilData, setPerfilData] = useState(null);
 
+  const obtenerDatosLocalStorage = () => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      try {
+        const parsedData = JSON.parse(userData);
+        setPerfilData(parsedData || {});
+      } catch (error) {
+        console.error("Error al parsear datos del usuario:", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    obtenerDatosLocalStorage();
+  }, []);
+
+  const idUser  = perfilData?.usuario?.id_usuario || "No hay id";
+  const idAdmin = perfilData?.usuario?.grupo?.usuario?.id_usuario || "No hay dato";
   const [events, setEventos] = useState([]);
   const [eventsUser, setEventosUsuarios] = useState([]);
+
 
   const getEvents = async () => {
     try {
       const response = await AxiosClient.get('evento/');
-      setEventos(response.data);
+      const filteredEvents=response.data.filter(event=>event.usuario.id_usuario===idAdmin)
+      setEventos(filteredEvents);
     } catch (error) {
       console.error('Error al obtener eventos generales:', error);
     }
   };
-
   const getEventsByUser = async () => {
     try {
-      const response = await AxiosClient({
-        url: `evento/usuario/${idUser}/eventos`,
-        method: "GET",
-        headers: {
-          Authorization: `${tokenType} ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await AxiosClient.get(`evento/usuario/${idUser}/eventos`);
       setEventosUsuarios(response.data);
     } catch (error) {
       console.error('Error al obtener eventos del usuario:', error);
@@ -70,7 +80,7 @@ const Events = ({ perfilData }) => {
 
   const carouselSettings = {
     dots: true,
-    infinite: true,
+    infinite: false, // importante para que no repita
     speed: 500,
     slidesToShow: 5,
     slidesToScroll: 1,
@@ -92,50 +102,41 @@ const Events = ({ perfilData }) => {
     ]
   };
 
-  const userEventIds = new Set(eventsUser.map(event => event.id_evento));
+  const sortByFechaDesc = (eventos) => {
+    return [...eventos].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+  };
 
+  const userEventIds = new Set(eventsUser.map(event => event.id_evento));
   const filteredEvents = events.filter(event => !userEventIds.has(event.id_evento));
-  const confirmedEvents = eventsUser.filter(event => event.estatus === "Próximamente");
+  const proximosEventos = sortByFechaDesc(filteredEvents).filter(e => e.estatus === "Próximamente");
+  const confirmedEvents = sortByFechaDesc(eventsUser).filter(event => event.estatus === "Próximamente");
 
   return (
-    <div className="m-4">
+    <div className="m-4 p-5">
       <h2 className="text-2xl font-bold mb-4">Eventos Próximos</h2>
       <div className="relative overflow-hidden w-full">
-        {filteredEvents.filter(event => event.estatus === "Próximamente").length > 5 ? (
+        {proximosEventos.length > 0 ? (
           <Slider {...carouselSettings}>
-            {filteredEvents
-              .filter(event => event.estatus === "Próximamente")
-              .map((event, index) => (
-                <div key={index} className="p-2">
-                  <FeaturedEvent
-                    event={event}
-                    refreshEvents={refreshEvents}
-                    idUser={idUser}
-                    token={token}
-                    tokenType={tokenType}
-                  />
-                </div>
-              ))}
-          </Slider>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {filteredEvents
-              .filter(event => event.estatus === "Próximamente")
-              .map((event, index) => (
+            {proximosEventos.map((event, index) => (
+              <div key={index} className="p-2">
                 <FeaturedEvent
-                  key={index}
                   event={event}
                   refreshEvents={refreshEvents}
                   idUser={idUser}
-                  token={token}
-                  tokenType={tokenType}
                 />
-              ))}
-          </div>
+              </div>
+            ))}
+            <div className="p-2">
+              <div className="h-full flex items-center justify-center border-2 border-dashed border-green-500 rounded-lg p-4 text-center text-gray-700">
+                <p className="text-lg font-medium">Ya has visto todos los eventos disponibles</p>
+              </div>
+            </div>
+          </Slider>
+        ) : (
+          <p className="text-gray-500">No hay eventos próximos disponibles.</p>
         )}
       </div>
 
-      {/* Mostrar solo si hay eventos confirmados */}
       {confirmedEvents.length > 0 && (
         <>
           <h2 className="text-2xl font-bold mt-8 mb-4">Eventos Confirmados</h2>
@@ -146,8 +147,6 @@ const Events = ({ perfilData }) => {
                 event={event}
                 refreshEvents={refreshEvents}
                 idUser={idUser}
-                token={token}
-                tokenType={tokenType}
               />
             ))}
           </div>
@@ -156,7 +155,7 @@ const Events = ({ perfilData }) => {
 
       <h2 className="text-2xl font-bold mt-8 mb-4">Eventos en Ejecución</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        {filteredEvents
+        {sortByFechaDesc(filteredEvents)
           .filter(event => event.estatus === "En Ejecución")
           .map((event, index) => (
             <EventCard
@@ -164,15 +163,13 @@ const Events = ({ perfilData }) => {
               event={event}
               refreshEvents={refreshEvents}
               idUser={idUser}
-              token={token}
-              tokenType={tokenType}
             />
           ))}
       </div>
 
       <h2 className="text-2xl font-bold mt-8 mb-4">Eventos Finalizados</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        {filteredEvents
+        {sortByFechaDesc(filteredEvents)
           .filter(event => event.estatus === "Finalizado")
           .map((event, index) => (
             <EventCard
@@ -180,8 +177,6 @@ const Events = ({ perfilData }) => {
               event={event}
               refreshEvents={refreshEvents}
               idUser={idUser}
-              token={token}
-              tokenType={tokenType}
             />
           ))}
       </div>
