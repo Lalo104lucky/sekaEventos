@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,7 +43,7 @@ public class EventoController {
     @GetMapping("/path/**")
     public ResponseEntity<byte[]> getImagen(HttpServletRequest request) {
         try {
-            String relativePath = request.getRequestURI().split("/path/")[1];
+            String relativePath = URLDecoder.decode(request.getRequestURI().split("/path/")[1], StandardCharsets.UTF_8);
             Path imagePath = Paths.get("src/main/resources", relativePath).normalize();
             byte[] imageBytes = Files.readAllBytes(imagePath);
             String contentType = Files.probeContentType(imagePath);
