@@ -49,17 +49,12 @@ function EditPassword({ user, onClose }) {
                         const response = await AxiosClient.patch(`/usuario/changeContra/${user.usuario.id_usuario}`, {
                             contrasena: values.newPassword,
                         });
-                        console.log("Respuesta del servidor:", response.data);
 
                         alertaExito("Éxito", "La contraseña se actualizó correctamente.");
                         onClose();
                     } catch (error) {
-                        console.error("Error al cambiar la contraseña:", error);
                         alertaError("Error", "No se pudo cambiar la contraseña. Intenta nuevamente.");
                     }
-                },
-                () => {
-                    console.log("Operación cancelada por el usuario.");
                 }
             );
         },

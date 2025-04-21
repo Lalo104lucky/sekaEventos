@@ -5,8 +5,7 @@ import { Outlet } from 'react-router-dom';
 const MemberLayout = ({perfilData}) => {
 
   return (
-    <div className="w-full pt-24 pb-2">
-    
+    <div className="w-full pt-16 pb-2">
       <NavbarMember perfilData={perfilData}/>
       <Outlet/>
     </div>

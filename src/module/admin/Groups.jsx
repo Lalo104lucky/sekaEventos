@@ -17,7 +17,7 @@ const Groups = () => {
       const response = await AxiosClient.get('/grupo/');
       setGroups(response.data);
     } catch (error) {
-      console.error('Error fetching groups:', error);
+      alertaError("Error", "No se pudieron obtener los grupos");
     }
   };
 
@@ -27,7 +27,7 @@ const Groups = () => {
       const administradores = response.data.filter(user => user.rol.rol === "ADMIN_GROUP");
       setAdministrators(administradores);
     } catch (error) {
-      console.error('Error fetching administrators:', error);
+      alertaError("Error", "No se pudieron obtener los administradores");
     }
   };
 
@@ -82,17 +82,13 @@ const Groups = () => {
                     }
                     getGroups();
                 } catch (error) {
-                    console.error('Error guardando grupo:', error);
                     if (error.response.status === 400) {
                         alertaError("Error", "El Administrador ya tiene un grupo asignado");
                     }
                     if (error.response.status !== 400) {
-                      alertaError("Error", "Algo salió mal al guardar el grupo");
+                      alertaError("Error", "No se pudo guardar el grupo");
                     }
                 }
-            },
-            () => {
-                alertaError("Cancelado", "La acción fue cancelada");
             }
         );
     },

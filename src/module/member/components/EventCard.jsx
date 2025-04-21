@@ -35,14 +35,12 @@ const EventCard = ({ event, idUser, tokenType, token , refreshEvents}) => {
           alertaExito("¡Asistencia cancelada!", "Se ha cancelado tu asistencia al evento.");
           setAsistenciaConfirmada(false);
         } catch (error) {
-          console.error("Error al cancelar asistencia:", error);
-          alertaError("Error", "No se pudo cancelar tu asistencia. Inténtalo de nuevo.");
+          alertaError("Error", "No se pudo cancelar tu asistencia.");
         }
       }
     );
   };
 
-  // 🎨 Determinar colores según estatus
   const getEstatusColor = (estatus) => {
     switch (estatus) {
       case "En Ejecución":

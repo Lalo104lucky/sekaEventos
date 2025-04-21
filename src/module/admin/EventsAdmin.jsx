@@ -7,8 +7,17 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import {AxiosClient} from '../../config/http-gateway/http-client';
 import * as yup from "yup";
-import { useFormik, yupToFormErrors } from "formik";
+import { useFormik, } from "formik";
 import { alertaExito, alertaError, alertaCargando, alertaPregunta } from '../../config/context/alert';
+
+export const getEvents = async (setEventos) => {
+    try {
+        const response = await AxiosClient.get('/evento/');
+        setEventos(response.data);
+    } catch (error) {
+        alertaError("Error", "Error al obtener los eventos.");
+    }
+};
 
 function EventsAdmin() {
     const [isModalCategoryOpen, setIsModalCategoryOpen] = useState(false);
@@ -17,6 +26,7 @@ function EventsAdmin() {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [events, setEventos] = useState([]);
     const [category, setCategory] = useState([]);
+    const [isInitialized, setIsInitialized] = useState(false);
     let  sliderRef = useRef(null);
 
     const handleModalCategory = () => {
@@ -62,15 +72,12 @@ function EventsAdmin() {
                         await AxiosClient.post("/tipoevento/", values);
                         alertaExito("Éxito", "Se guardó correctamente el tipo de evento");
                     } catch (error) {
-                        alertaError("Error", "Algo salió mal");
+                        alertaError("Error", "No se pudo guardar el tipo de evento");
                     } finally {
                         handleModalCategory();
                         await getCategories();
                         setShouldFetch(true);
                     }
-                },
-                () => {
-                    alertaError("Cancelado", "La creación fue cancelada");
                 }
             );
         }
@@ -97,47 +104,17 @@ function EventsAdmin() {
                         });
                         alertaExito("Éxito", "Se actualizó correctamente el tipo de evento");
                     } catch (error) {
-                        alertaError("Error", "Algo salió mal");
+                        alertaError("Error", "No se pudo actualizar el tipo de evento");
                     } finally {
                         setIsModalCategoryEdit(false);
                         await getCategories();
                     }
-                },
-                () => {
-                    alertaError("Cancelado", "La actualización fue cancelada");
                 }
             );
         }
     });
 
-    const eliminarTipoEvento = (event) => {
-        alertaPregunta(
-            "Eliminar Tipo de Evento",
-            `¿Deseas eliminar el tipo de evento?`,
-            async () => {
-                try {
-                    alertaCargando("Cargando", "Eliminando el tipo de evento...");
-                    await AxiosClient.delete(`/tipoevento/${event.id_tipoevento}`);
-                    alertaExito("Éxito", "El tipo de evento se eliminó correctamente");
-                    await getCategories();
-                } catch (error) {
-                    alertaError("Error", "Algo salió mal al eliminar el tipo de evento");
-                }
-            },
-            () => {
-                alertaError("Cancelado", "La eliminación fue cancelada");
-            }
-        );
-    }
-
-    const getEvents = async () => {
-        try {
-            const response = await AxiosClient.get('/evento/');
-            setEventos(response.data);
-        } catch (error) {
-            console.error('Error fetching events:', error);
-        }
-    }
+    
 
     const getCategories = async () => {
         try{
@@ -150,14 +127,17 @@ function EventsAdmin() {
             }));
             setCategory(categories);
         }catch(error){
-            console.error('Error fetching events:', error);
+            alertaError("Error", "Error al obtener los tipos de eventos");
         }
     }
 
     useEffect(() => {
-        getEvents();
-        getCategories();
-    }, [])
+        if (!isInitialized) {
+            getEvents(setEventos);
+            getCategories();
+            setIsInitialized(true);
+        }
+    }, [isInitialized]);
 
 
     const carouselSettings = {
@@ -211,7 +191,7 @@ function EventsAdmin() {
                 className='bg_dark_forest text-white px-4 py-2 rounded-lg hover:bg_dark_forest transition'
                 onClick={handleModalCategory}
             >
-                <i className="pi pi-plus mr-2"></i>Tipo de Evento
+                <i className="pi pi-plus mr-2"></i>Nuevo Tipo de Evento
             </button>
         </div>
         {
@@ -245,28 +225,6 @@ function EventsAdmin() {
                                         strokeLinejoin="round"
                                         strokeWidth="2"
                                         d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"
-                                    />
-                                </svg>
-                            </button>
-                            <button 
-                                className="bg-red-700 px-3 py-1 rounded hover:bg-red-800 transition"
-                                onClick={()=> eliminarTipoEvento(event)}
-                            >
-                                <svg
-                                    className="w-5 h-5 text-white"
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        stroke="currentColor"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"
                                     />
                                 </svg>
                             </button>

@@ -16,7 +16,6 @@ const NavbarAdminGroup = () => {
       const user = JSON.parse(localStorage.getItem("user"));
       return user || null; 
     } catch (error) {
-      console.error("Error al leer los datos del usuario:", error);
       return null; 
     }
   };
@@ -59,7 +58,7 @@ const NavbarAdminGroup = () => {
 
   return (
     <>
-      <nav className="bg_dark_forest border-gray-200 text-white py-4 px-6 flex justify-between items-center fixed w-full top-0 z-10">
+      <nav className="bg_dark_forest border-gray-200 text-white py-4 px-4 flex justify-between items-center fixed w-full top-0 z-10">
         <div className="flex items-center space-x-3">
           <NavLink to="/" className="flex items-center space-x-3">
             <img

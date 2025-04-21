@@ -18,6 +18,7 @@ import Logo from '../assets/img/Logo.png';
 import EventsMember from '../module/member/Events';
 import Page404 from '../module/auth/Page404';
 import ProfileMember from '../module/member/Profile';
+import { alertaError } from '../config/context/alert';
 
 const AppRouter = () => {
     const { user } = useContext(AuthContext);
@@ -32,16 +33,14 @@ const AppRouter = () => {
                 const parsedData = JSON.parse(userData);
                 const perfilInfo = parsedData|| {};
                 setPerfilData(perfilInfo);
-                console.log("funcion ejecutada")
             } catch (error) {
-                console.error("Error al parsear datos del usuario:", error);
+                alertaError("Error", "Error al mandar datos del usuario.");
             }
         }
 
     }
     
     useEffect(() => {
-        console.log("funcion ejecutada")
         obtenerDatosLocalStorage();
     }, []);
 

@@ -17,7 +17,7 @@ function EditEvent({ eventId, onClose }) {
                 const response = await AxiosClient.get("/tipoevento/");
                 setTipoEventos(response.data);
             } catch (error) {
-                console.error("Error al obtener los tipos de eventos:", error);
+                alertaError("Error", "No se pudo obtener los tipos de eventos");
             }
         };
 
@@ -26,7 +26,7 @@ function EditEvent({ eventId, onClose }) {
                 const response = await AxiosClient.get(`/evento/${eventId}`);
                 setEvento(response.data);
             } catch (error) {
-                console.error("Error al obtener los datos del evento:", error);
+                alertaError("Error", "No se pudo obtener los eventos");
             }
         };
 
@@ -73,7 +73,6 @@ function EditEvent({ eventId, onClose }) {
                     alertaExito("Éxito", "Evento actualizado correctamente");
                     onClose();
                 } catch (error) {
-                    console.error("Error al actualizar el evento:", error);
                     alertaError("Error", "No se pudo actualizar el evento");
                 }
             });

@@ -13,7 +13,6 @@ function EditMember({ memberId, onClose, onMemberUpdated }) {
                 const response = await AxiosClient.get(`/usuario/${memberId}`);
                 setMemberData(response.data);
             } catch (error) {
-                console.error("Error al obtener los datos del miembro:", error);
                 alertaError("Error", "No se pudieron cargar los datos del miembro.");
             }
         };
@@ -56,8 +55,7 @@ function EditMember({ memberId, onClose, onMemberUpdated }) {
                         onMemberUpdated(); 
                         onClose(); 
                     } catch (error) {
-                        console.error("Error al actualizar el miembro:", error);
-                        alertaError("Error", "No se pudo actualizar el miembro. Intenta nuevamente.");
+                        alertaError("Error", "No se pudo actualizar el miembro.");
                     }
                 }
             );

@@ -156,14 +156,11 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
                             },
                         });
 
-                        console.log("Response:", response.data);
                         const data = response.data;
-                        console.log(data);
                         actualizarInformacionLocalStorage(data);
 
                         alertaExito("Éxito", "Se actualizó correctamente la información del usuario");
                     } catch (error) {
-                        console.error("Error:", error);
                         alertaError("Error", "Error al actualizar la información del usuario");
                     }
                 }
@@ -196,15 +193,10 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
                             method: "PATCH",
                             data: payload,
                         });
-
-                        console.log("Response:", response.data);
-
                         alertaExito("Éxito", "Se actualizó correctamente la contraseña");
 
-                        // Limpiar formulario
                         passwordFormik.resetForm();
                     } catch (error) {
-                        console.error("Error:", error);
                         alertaError("Error", "Error al actualizar la contraseña");
                     }
                 }
@@ -212,7 +204,6 @@ const Profile = ({ perfilData, obtenerDatosLocalStorage }) => {
         }
     });
 
-    // Función para resetear el formulario de usuario
     const handleResetUserForm = () => {
         userFormik.setValues({
             usuario: usuarioInfo?.usuario || "Usuario",

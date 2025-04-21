@@ -28,7 +28,7 @@ function Members() {
         setGrupoId(filteredGroup.id_grupo);
       }
     } catch (error) {
-      console.error("Error al obtener el id_grupo:", error);
+      alertaError("Error", "No se pudo cargar el grupo seleccionado.");
     }
   };
 
@@ -45,7 +45,7 @@ function Members() {
 
       setMembers(filteredMembers);
     } catch (error) {
-      console.error("Error al obtener los miembros:", error);
+      alertaError("Error", "No se pudo cargar los miembros.");
     }
   };
 
@@ -66,8 +66,7 @@ function Members() {
                 alertaExito("Éxito", "El miembro ha sido eliminado correctamente.");
                 fetchMembers(); 
             } catch (error) {
-                console.error("Error al eliminar el miembro:", error);
-                alertaError("Error", "No se pudo eliminar el miembro. Intenta nuevamente.");
+                alertaError("Error", "No se pudo eliminar el miembro.");
             }
         }
     );

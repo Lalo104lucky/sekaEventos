@@ -4,7 +4,7 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import AuthContext from "../../config/context/auth-context";
 import { AxiosClient } from '../../config/http-gateway/http-client';
-import { alertaExito, alertaError } from '../../config/context/alert';
+import { alertaExito, alertaError, alertaCargando } from '../../config/context/alert';
 
 import Logo from '../../assets/img/logo.png';
 import Fondo from '../../assets/img/fondoLogin.jpg';
@@ -29,8 +29,8 @@ const SignInPage = () => {
         }),
         onSubmit: async (values, { setSubmitting }) => {
             try {
+                alertaCargando("Iniciando sesión...", "Por favor espera un momento.");
                 const response = await AxiosClient.post("/auth/login", values);
-                console.log("Formulario enviado:", values);
                 if (response.data && response.data.token) {
                     dispatch({
                         type: "SIGNIN",
@@ -40,15 +40,12 @@ const SignInPage = () => {
                     localStorage.setItem("user", JSON.stringify(response.data));
 
                     alertaExito('Éxito', 'Se inició sesión correctamente');
-                    console.log("Inicio de sesión exitoso");
                     navigate("/", { replace: true });
 
                 } else {
-                    ('Acceso Denegado', 'Credenciales incorrectas.');
-                    console.log("Error: Credenciales incorrectas");
+                    alertaError('Acceso Denegado', 'Credenciales incorrectas.');
                 }
             } catch (error) {
-                console.error("Error en inicio de sesión:", error);
                 alertaError('Error', 'Usuario y/o contraseña incorrectos');
             } finally {
                 setSubmitting(false);

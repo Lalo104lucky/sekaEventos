@@ -98,10 +98,10 @@ const Events = ({ perfilData }) => {
   const confirmedEvents = eventsUser.filter(event => event.estatus === "Próximamente");
 
   return (
-    <div className="m-4">
-      <h2 className="text-2xl font-bold mb-4">Eventos Próximos</h2>
-      <div className="relative overflow-hidden w-full">
-        {filteredEvents.filter(event => event.estatus === "Próximamente").length > 5 ? (
+    <div className="p-8 font-poppins">
+      <h2 className="text-2xl font-bold mb-4 px-8 py-3">Eventos Próximos</h2>
+      <div className="relative overflow-hidden w-full px-8">
+        {filteredEvents.filter(event => event.estatus === "Próximamente").length > 4 ? (
           <Slider {...carouselSettings}>
             {filteredEvents
               .filter(event => event.estatus === "Próximamente")
@@ -135,7 +135,6 @@ const Events = ({ perfilData }) => {
         )}
       </div>
 
-      {/* Mostrar solo si hay eventos confirmados */}
       {confirmedEvents.length > 0 && (
         <>
           <h2 className="text-2xl font-bold mt-8 mb-4">Eventos Confirmados</h2>

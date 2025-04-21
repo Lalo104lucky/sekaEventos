@@ -21,7 +21,6 @@ function EditStatus({ eventId, currentStatus, onClose, onStatusChange }) {
             onStatusChange();
             onClose();
         } catch (error) {
-            console.error("Error al actualizar el estatus:", error);
             alertaError("Error", "No se pudo actualizar el estatus del evento.");
         }
     };

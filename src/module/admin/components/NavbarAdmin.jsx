@@ -27,7 +27,6 @@ const NavbarAdmin = () => {
         const user = JSON.parse(localStorage.getItem("user"));
         return user || null; 
       } catch (error) {
-        console.error("Error al leer los datos del usuario:", error);
         return null; 
       }
     };

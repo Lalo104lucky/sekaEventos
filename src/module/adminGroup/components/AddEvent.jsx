@@ -15,9 +15,8 @@ function AddEvent({ onClose }) {
             try {
                 const response = await AxiosClient.get("/tipoevento/");
                 setTipoEventos(response.data);
-                console.log("Tipos de eventos:", response.data);
             } catch (error) {
-                console.error("Error al obtener los tipos de eventos:", error);
+                alertaError("Error", "No se pudieron cargar los tipos de eventos");
             }
         };
         fetchTipoEventos();
@@ -51,7 +50,6 @@ function AddEvent({ onClose }) {
                         id_usuario: user.usuario.id_usuario,
                         id_tipoevento: values.id_tipoevento,
                     };
-                    console.log("Datos del evento:", formData);
 
                     const responseEvento = await AxiosClient.post("/evento/", formData);
                     const eventoCreado = responseEvento.message;
@@ -68,7 +66,6 @@ function AddEvent({ onClose }) {
                     alertaExito("Éxito", "Evento creado correctamente");
                     onClose();
                 } catch (error) {
-                    console.error("Error al crear el evento:", error);
                     alertaError("Error", "No se pudo crear el evento");
                 }
             });

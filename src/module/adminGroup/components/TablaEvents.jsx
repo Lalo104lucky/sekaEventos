@@ -17,6 +17,8 @@ const TablaEvents = ({
   onDelete,
   onEditStatus,
 }) => {
+
+
   const statusFilterTemplate = (options) => {
     return (
       <Dropdown

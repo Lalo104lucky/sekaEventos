@@ -18,15 +18,23 @@ function Events() {
     const [selectedEventId, setSelectedEventId] = useState(null);
     const [showEditStatusModal, setShowEditStatusModal] = useState(false);
     const [selectedEventForStatus, setSelectedEventForStatus] = useState(null);
+    
 
     const fetchEvents = async () => {
         try {
-            const response = await AxiosClient.get("/evento/");
-            setEvents(response.data);
+            const user = JSON.parse(localStorage.getItem("user"));
+            const userId = user?.usuario?.id_usuario;
+    
+            if (!userId) {
+                return;
+            }
+            const response = await AxiosClient.get(`/evento/`); 
+            const filteredEvents = response.data.filter(event => event.usuario.id_usuario === userId);
+            setEvents(filteredEvents);
         } catch (error) {
-            console.error("Error al obtener los eventos:", error);
+            alertaError("Error", "No se pudo cargar los eventos.");
         }
-    }
+    };
 
     const fetchCategoryOptions = async () => {
         try {
@@ -37,8 +45,13 @@ function Events() {
             }));
             setCategoryOptions(categories);
         } catch (error) {
-            console.error("Error al obtener las categorías:", error);
+            alertaError("Error", "No se pudo cargar las categorías.");
         }
+    };
+
+    const handleEditEvent = (eventId) => {
+        setSelectedEventId(eventId);
+        setShowEditEventModal(true);
     };
 
     const handleDelete = async (eventId) => {
@@ -54,17 +67,21 @@ function Events() {
                     alertaExito("Éxito", "El evento ha sido eliminado correctamente.");
                     fetchEvents();
                 } catch (error) {
-                    console.error("Error al eliminar el evento:", error);
                     alertaError("Error", "No se pudo eliminar el evento.");
                 }
             }
         );
     };
 
+    const handleEditStatus = (eventId, currentStatus) => {
+        setSelectedEventForStatus({ id: eventId, status: currentStatus });
+        setShowEditStatusModal(true); 
+    };
+
     useEffect(() => {
         fetchEvents();
         fetchCategoryOptions();
-    }, [])
+    }, []);
 
 
     const statusOptions = [
@@ -113,15 +130,9 @@ function Events() {
                 setSelectedCategory={setSelectedCategory}
                 statusOptions={statusOptions}
                 categoryOptions={categoryOptions}
-                onEdit={(eventId) => {
-                    setSelectedEventId(eventId);
-                    setShowEditEventModal(true);
-                }}
+                onEdit={handleEditEvent}
                 onDelete={handleDelete}
-                onEditStatus={(eventId, currentStatus) => {
-                    setSelectedEventForStatus({ id: eventId, status: currentStatus });
-                    setShowEditStatusModal(true);
-                }}
+                onEditStatus={handleEditStatus}
             />
 
 

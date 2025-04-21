@@ -37,7 +37,6 @@ function EditProfile({ user, onClose }) {
                             telefono: values.telefono,
                             id_rol: user.usuario.rol.id_rol,
                         });
-                        console.log("Respuesta del servidor:", response.data);
                         const updatedUser = {
                             ...user,
                             usuario: {
@@ -54,12 +53,8 @@ function EditProfile({ user, onClose }) {
                         alertaExito("Éxito", "La información se actualizó correctamente.");
                         onClose();
                     } catch (error) {
-                        console.error("Error al actualizar la información:", error);
-                        alertaError("Error", "No se pudo actualizar la información. Intenta nuevamente.");
+                        alertaError("Error", "No se pudo actualizar la información.");
                     }
-                },
-                () => {
-                    console.log("Operación cancelada por el usuario.");
                 }
             );
         },

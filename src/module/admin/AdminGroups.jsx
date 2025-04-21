@@ -31,11 +31,10 @@ const AdminGroups = () => {
         grupo: group ? group.nombre : "Sin grupo"
       };
     });
-      console.log(adminGroups);
       setData(adminGroups);
       setGroups(groups);
     }catch(error){
-      console.error('Error fetching administradores:', error);
+      alertaError("Error", "No se pudo obtener la información de los administradores.");
     }
   }
     
@@ -104,12 +103,8 @@ const AdminGroups = () => {
                       getAdminGroups();
                       handleAddModal();
                   } catch (error) {
-                      console.error('Error creando administrador:', error);
-                      alertaError("Error", "Algo salió mal al crear el administrador");
+                      alertaError("Error", "No se pudo crear el administrador");
                   }
-              },
-              () => {
-                  alertaError("Cancelado", "La creación fue cancelada");
               }
           );
       },
@@ -154,12 +149,8 @@ const AdminGroups = () => {
                       getAdminGroups();
                       setIsModalEditOpen(false);
                   } catch (error) {
-                      console.error('Error actualizando administrador:', error);
-                      alertaError("Error", "Algo salió mal al actualizar el administrador");
+                      alertaError("Error", "No se pudo actualizar el administrador");
                   }
-              },
-              () => {
-                  alertaError("Cancelado", "La actualización fue cancelada");
               }
           );
       },

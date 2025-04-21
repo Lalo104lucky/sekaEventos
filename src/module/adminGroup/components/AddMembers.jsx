@@ -54,8 +54,7 @@ function AddMembers({ grupoId, onClose, onMemberAdded }) {
                         onMemberAdded(); 
                         onClose(); 
                     } catch (error) {
-                        console.error("Error al agregar el miembro:", error);
-                        alertaError("Error", "No se pudo agregar el miembro. Intenta nuevamente.");
+                        alertaError("Error", "No se pudo agregar el miembro.");
                     }
                 }
             );
